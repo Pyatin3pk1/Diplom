@@ -12,16 +12,16 @@ body {
   }
   
   /* header */
-  .header {
-    padding: 40px 0;
-    position: static;
-    height: 5px;
-  }
-  
   .header .container {
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .menu{
+    padding: 40px 0;
+    position: static;
+    height: 5px;
   }
   
   .menu-list {
@@ -53,15 +53,98 @@ body {
     position: absolute;
     right: 30px;
   }
-  
+  .button-logaut{
+    display: none;
+  }
   .menu-item ul li button:hover {
     color: burlywood;
+  }
+  .burger-user{
+    display: none;
   }
   
   .menu-item:hover > ul li button {
     display: inherit;
   }
-  
+  .menu-button{
+    display: none;
+
+  }
+  @media(max-width: 742px){
+    .container{
+      display: none;
+    }
+    .menu{
+        position: fixed;
+        top: 0;
+        left: -227px;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: visible;
+        width: 220px;
+        height: 100%;
+        color: #000c3f;
+        background-color: white;
+        border: 2px solid #000c3f;
+        border-top-right-radius: 16px;
+        border-bottom-right-radius: 16px;
+        transition: transform 0.3s linear;
+        &.active{
+            transform: translateX(100%);
+        }
+
+        .burger-user{
+          font-size: 24px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding-top: 40px;
+          color: #00b4d8;
+        }
+
+        .menu-list{
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            
+        }
+        .menu-item{
+            margin: 10px 0;
+            font-weight: 500;
+            color: #000c3f;
+            &.user{
+              display: none;
+            }
+        }
+        .menu-item a{
+            margin: 10px 0;
+            font-weight: 500;
+            color: #000c3f;
+        }
+        .button-logaut{
+            display: block;
+            font-size: 24px;
+            bottom: 0;
+            position: absolute;
+            text-decoration: solid;
+            font-weight: 500;
+            color: #000c3f;
+        }
+        .menu-item:nth-child(n+2){
+            margin-left: 0px;
+        }
+        .menu-button{
+            display: block;
+            margin-left: auto;
+            height: 24px;
+            top: 0;
+            right: 0;
+            padding: 0;
+            position: fixed;
+        }
+    }
+  }
   
   .container-log {
     display: grid;
