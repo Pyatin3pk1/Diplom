@@ -8,6 +8,15 @@ const Chats = () => {
     const [chats, setChats] = useState([]);
     const {currentUser} = useContext(AuthContext);
     const {dispatch} = useContext(ChatContext);
+    const {rootElement} = document.documentElement;
+
+    const updateStatus = (e) => {
+        const color = navigator.onLine ? '#008000' :
+        '#bb2e07';
+        rootElement.style.setProperty('--status-color', color)
+    }
+    window.addEventListener('online', updateStatus);
+    window.addEventListener('offline', updateStatus);
 
     useEffect(()=>{
         const getChats = () =>{
@@ -28,8 +37,10 @@ const Chats = () => {
 
     return (
         <div className='chats'>
+            <div className="status"></div>
             {chats && Object.entries(chats).map((chat) =>(
                 <div className="userChat" key={chat[0]} onClick={()=>handleSelect(chat[1].userInfo)}>
+                    <div className="status"></div>
                     <div className="userCharInfo">
                         <span>{chat[1].userInfo.displayName}</span>
                     </div>

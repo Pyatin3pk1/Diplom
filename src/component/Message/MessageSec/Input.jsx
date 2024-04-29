@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import Attach from '../../../assets/attach-file.png'
+import Attach from '../../../assets/attach-file.png';
 import { Timestamp, arrayUnion, doc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { db, storage } from '../../../firebase';
@@ -81,11 +81,12 @@ const Input = () => {
                 },
                 [data.chatId+".data"]: serverTimestamp()
             })
-            setText;
+            setText("");
         }
     }
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
+        setText("");
       };
     return (
         <div className='input'>

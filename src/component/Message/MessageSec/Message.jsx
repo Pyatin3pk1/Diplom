@@ -32,7 +32,7 @@ const Message = ({message}) => {
             ) : message.file ? (
             <>
                 <p>
-                    <img src={Doc} alt="" />
+                    <img src={Download} alt="" />
                     
                         {getFileName(message.file).fileBaseName}
                         {getFileName(message.file).fileExtension && `.${getFileName(message.file).fileExtension}`}
@@ -44,7 +44,7 @@ const Message = ({message}) => {
                     target="_blank"
                     rel="noopener noreferrer"
                     >
-                    <img src={Download} alt="" />
+                    <img src={Doc} alt="" />
                     </a>
                 </p>
                 
