@@ -82,6 +82,7 @@ const Input = () => {
                 [data.chatId+".data"]: serverTimestamp()
             })
             setText("");
+            setFile(null);
         }
     }
     const handleFileChange = (e) => {
@@ -90,7 +91,7 @@ const Input = () => {
       };
     return (
         <div className='input'>
-            <input type="text" value={text} placeholder='Введите сообщение...' onChange={e=>setText(e.target.value)}/>
+            <textarea type="text" value={text} placeholder='Введите сообщение...' onChange={e=>setText(e.target.value)}/>
             <div className="send">
                 <input type="file" onChange={handleFileChange} style={{display:"none"}} id="file"/>
                 <label htmlFor="file">
