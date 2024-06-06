@@ -12,18 +12,17 @@ import { useNavigate } from 'react-router-dom';
 import AddEmployee from './addEmployee/AddEmployee';
 import Delete from '../../assets/delete.png';
 
-const Employee = () => {
+const ListUser = () => {
     const navigate = useNavigate();
-    const [chats, setChats] = useState([]);
-    const [addModel, setAddModel] = useState(false);
     const [searchText, setSearchText] = useState('');
     const { currentUser } = useContext(AuthContext);
     const { dispatch } = useContext(ChatContext);
     const { departments, fetchUsers } = useContext(UserListContext);
     const [employees, setEmployees] = useState([]);
-    const [filteredEmployees, setFilteredEmployees] = useState([]); // Состояние для отфильтрованных сотрудников
+    const [filteredEmployees, setFilteredEmployees] = useState([]); 
+    const [searchResults, setSearchResults] = useState([]); 
     const [roles, setRoles] = useState({});
-    const [selectedRole, setSelectedRole] = useState(''); // Состояние для хранения данных о ролях
+    const [selectedRole, setSelectedRole] = useState(''); 
 
     useEffect(() => {
         if (currentUser && currentUser.uid) {
@@ -47,7 +46,7 @@ const Employee = () => {
                 ...doc.data()
             }));
             setEmployees(users);
-            filterEmployeesByRole(selectedRole, users); // Фильтруем сотрудников по выбранной роли
+            setSearchResults(users); 
         });
 
         return () => unsubscribe();
@@ -111,77 +110,28 @@ const Employee = () => {
         const filteredResults = employees.filter(employee =>
             employee.displayName.toLowerCase().includes(searchText)
         );
-        filterEmployeesByRole(selectedRole, filteredResults); // Фильтруем результаты поиска по выбранной роли
+        setSearchResults(filteredResults);
+        filterEmployeesByRole(selectedRole, filteredResults); 
     };
 
     const handleSortByRole = (e) => {
         const selectedRole = e.target.value;
-        setSelectedRole(selectedRole); // Обновляем выбранную роль
-        filterEmployeesByRole(selectedRole, employees); // Фильтруем сотрудников по выбранной роли
+        setSelectedRole(selectedRole); 
+        filterEmployeesByRole(selectedRole, searchResults); 
     };
 
     const filterEmployeesByRole = (role, employeesList) => {
         const filteredEmployees = role === '' 
             ? employeesList 
             : employeesList.filter(employee => employee.role === role);
-        const filteredResults = searchText === '' 
-            ? filteredEmployees 
-            : filteredEmployees.filter(employee =>
-                employee.displayName.toLowerCase().includes(searchText)
-            );
-        setFilteredEmployees(filteredResults); // Устанавливаем отфильтрованных сотрудников
+        setFilteredEmployees(filteredEmployees); 
     };
 
     useEffect(() => {
         if (employees.length > 0) {
-            filterEmployeesByRole(selectedRole, employees); // Фильтруем сотрудников по выбранной роли при загрузке
+            setFilteredEmployees(employees); 
         }
-    }, [employees, selectedRole]);
-    
-    const handleDeleteEmployee = async (employee) => {
-        try {
-            await deleteDoc(doc(db, "users", employee.uid));
-
-            const combinedId = currentUser.uid > employee.uid
-                ? currentUser.uid + employee.uid
-                : employee.uid + currentUser.uid;
-
-            const chatDocRef = doc(db, "chats", combinedId);
-            const chatDoc = await getDoc(chatDocRef);
-
-            if (chatDoc.exists()) {
-                await deleteDoc(chatDocRef);
-
-                const currentUserChatRef = doc(db, "userChats", currentUser.uid);
-                const currentUserChatDoc = await getDoc(currentUserChatRef);
-
-                if (currentUserChatDoc.exists()) {
-                    await updateDoc(currentUserChatRef, {
-                        [combinedId]: deleteField()
-                    });
-                }
-
-                const employeeChatRef = doc(db, "userChats", employee.uid);
-                const employeeChatDoc = await getDoc(employeeChatRef);
-
-                if (employeeChatDoc.exists()) {
-                    await updateDoc(employeeChatRef, {
-                        [combinedId]: deleteField()
-                    });
-                }
-            } else {
-                console.log(`Chat document does not exist for combined ID: ${combinedId}`);
-            }
-
-            fetchUsers();
-        } catch (err) {
-            console.error(`Error deleting employee: ${err.message}`);
-        }
-    };
-    const closeModal = () => {
-        setAddModel(false);
-        fetchUsers();
-    };
+    }, [employees]);
 
     return (
         <div className="home">
@@ -198,13 +148,8 @@ const Employee = () => {
                                     onChange={handleSearch} 
                                 />
                             </div>
-                            <img 
-                                src={addModel ? Minus : Plus} 
-                                className='addUser'
-                                onClick={() => setAddModel((prev) => !prev)} 
-                            />
                         </div>
-                         <select onChange={handleSortByRole} value={selectedRole}> 
+                        <select onChange={handleSortByRole} value={selectedRole}> 
                             <option value="">Выберите роль</option> 
                             {Object.entries(roles).map(([roleId, roleName]) => (
                                 <option key={roleId} value={roleId}>{roleName}</option>
@@ -215,7 +160,7 @@ const Employee = () => {
                         {filteredEmployees.length > 0 ? ( 
                             filteredEmployees.map((employee) => {
                                 const avatarUrl = employee.photoURL ? employee.photoURL : Avatar;
-    
+
                                 return (
                                     <div className="employee-item" key={employee.uid}>
                                         <div className="employee-item__content" onClick={() => handleSelect(employee)}>
@@ -226,9 +171,6 @@ const Employee = () => {
                                                 <span>Роль: {roles[employee.role] || 'Роль не задана'}</span>
                                             </div>
                                         </div>
-                                        <button className="deleteChat" onClick={() => handleDeleteEmployee(employee)}> 
-                                            <img src={Delete} alt="Delete"/>
-                                        </button>
                                     </div>
                                 );
                             })
@@ -240,10 +182,9 @@ const Employee = () => {
                     </div>
                 </div>
             </div>
-            {addModel && <AddEmployee closeModal={closeModal} />}
         </div>
     );
 };
-    
-export default Employee;
-    
+
+
+export default ListUser;

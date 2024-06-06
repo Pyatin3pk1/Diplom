@@ -321,34 +321,51 @@ body {
 
         .search{
           display: flex;
-          align-items: center;
-          gap: 20px;
+          flex-direction: column;
           padding: 20px;
-          .searchBar{
+          .search__moduls{
+            display: flex;
+            gap: 20px;
+            flex: 1;
+            .searchBar{
+              display: flex;
+              flex: 1;
+              background-color: #030a2b;
+              gap: 20px;
+              align-items: center;
+              border-radius: 20px;
+              padding: 20px;
+  
+              input{
+                all: unset;
+                flex: 1;
+              }
+              img{
+                height: 20px;
+              }
+            }
+            .addUser{
+              width: 36px;
+              background-color: #030a2b;
+              padding: 12px;
+              border-radius: 20px;
+              cursor: pointer;
+          }
+          }
+          
+          select{
             display: flex;
             flex: 1;
+            font-size: 18px;
+            margin-top: 5px;
             background-color: #030a2b;
             gap: 20px;
+            color: white;
             align-items: center;
+            border: none;
             border-radius: 20px;
-            padding: 20px;
-
-            input{
-              all: unset;
-              flex: 1;
-            }
-            img{
-              height: 20px;
-            }
+            padding: 10px;
           }
-          .addUser{
-            width: 36px;
-            background-color: #030a2b;
-            padding: 12px;
-            border-radius: 20px;
-            cursor: pointer;
-          }
-
         }
 
         .employeeConteiner{

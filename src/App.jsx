@@ -12,6 +12,9 @@ import Log from "./component/Login/Log";
 import ChatMes from "./component/Message/ChatMes";
 import Reg from "./component/Register/Reg";
 import EmployeePage from "./component/Employee/EmployeePage";
+import ListEmployee from "./component/Employee/ListEmployee";
+import Employee from "./component/Employee/Employee";
+import ListUser from "./component/Employee/ListUser";
 
 
 const App = () => {

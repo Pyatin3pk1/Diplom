@@ -52,7 +52,7 @@ const AddEmployee = ({ closeModal }) => {
 
             // Создаем нового пользователя
             const res = await createUserWithEmailAndPassword(auth, email, password);
-            await updateProfile(res.user, { displayName: fullName,  photoURL: avatar.url});
+            await updateProfile(res.user, { displayName: fullName,  photoURL: avatar.url, role: selectedRole});
             await setDoc(doc(db, "users", res.user.uid), {
                 uid: res.user.uid,
                 displayName: fullName,
