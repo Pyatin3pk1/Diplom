@@ -7,40 +7,42 @@ import { signOut } from "firebase/auth";
 import { auth } from "../../../firebase";
 import { AuthContext } from "../../Context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import Avatar from "../../../assets/avatar.png";
 
 const HeaderMes = () => {
-  const {currentUser} = useContext(AuthContext);
+  const { currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [isOpen, setOpen] = useState();
+  const [isOpen, setOpen] = useState(false);
+
+  // Проверяем, что currentUser установлен, прежде чем использовать его свойства
+  const displayName = currentUser ? currentUser.displayName : '';
+  const avatarUrl = currentUser ? currentUser.photoURL : '';
+
   return (
     <>
-        <header className="header">
+      <header className="header">
         <div className="container">
-            <nav className={`menu ${isOpen ? "active" : ""}`}>
-            <label className="burger-user">{currentUser.displayName}</label>
+          <nav className={`menu ${isOpen ? "active" : ""}`}>
+            <label className="burger-user">{displayName}</label>
             <ul className="menu-list">
-                <li className="menu-item">
-                <a >Заявления</a>
-                </li>
-                <li className="menu-item">
-                <a >Чат</a>
-                </li>
-                <li className="menu-item">
-                <a >Уведомления</a>
-                </li>
-                <li className="menu-item user">
-                <a >{currentUser.displayName}</a>
-                    <ul>
-                        <li><button onClick={() =>{ signOut(auth); navigate("/login")}}>Выход</button></li>
-                    </ul>
-                </li>
+              <li className="menu-item">
+                <a onClick={() => { navigate('/') }}>Чат</a>
+              </li>
+              <li className="menu-item">
+                <a onClick={() => { navigate('/employee') }}>Сотрудники</a>
+              </li>
+              <li className="menu-item menu-item__user">
+                <img src={avatarUrl || Avatar} alt="avatar"/>
+                <a>{displayName}</a>
+              </li>
+              <li>
+                <button className="menu-button" onClick={() => setOpen(!isOpen)}><GiHamburgerMenu /></button>
+                <button className="button-logaut" onClick={() => { signOut(auth); navigate("/login") }}>Выход</button>
+              </li>
             </ul>
-            <button className="menu-button"
-                onClick={() => setOpen(!isOpen)}><GiHamburgerMenu/></button>
-            <button className="button-logaut" onClick={() =>{ signOut(auth); navigate("/login")}}>Выход</button>
-            </nav>
+          </nav>
         </div>
-        </header>
+      </header>
     </>
   );
 }

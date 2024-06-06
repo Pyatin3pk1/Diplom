@@ -7,19 +7,22 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 const LoginPage = ({title, handleClick}) => {
     const[email, setEmail] = useState('');
     const[pass, setPass] = useState('');
-    const [err, setErr] = useState(false)
+    const[errMessage, setErrMessage] = useState('')
     const navigate = useNavigate();
     const handleSubmit = async (e) =>{
         e.preventDefault()
-        const email = e.target[0].value;
-        const password = e.target[1].value;        
+        const userEmail = email;
+        const password = pass;        
         try{
             await signInWithEmailAndPassword(auth, 
-                email, password);
+                userEmail, password);
             navigate("/");
           
         }catch(err){
-            setErr(true);
+            setErrMessage('Ошибка авторизации. Пожалуйста попробуйте ещё раз.');
+            setTimeout (() => {
+                setErrMessage('');
+            }, 10000)
         }
     }
     return (
@@ -28,6 +31,7 @@ const LoginPage = ({title, handleClick}) => {
                 <div className="container-blur">
                     <div className="login-container">
                         <h3>Авторизация</h3>
+                        {errMessage && <p color='#FF0000'>{errMessage}</p>}
                         <form onSubmit={handleSubmit}>
                             <div className="input-group">
                                 <label htmlFor="email">Email:</label>

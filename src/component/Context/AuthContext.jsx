@@ -5,22 +5,31 @@ import { auth } from "../../firebase";
 export const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState({});
+  const [currentUser, setCurrentUser] = useState(null);
+  const [authListenerEnabled, setAuthListenerEnabled] = useState(true);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-      console.log(user);
-    });
+    let unsub;
+
+    if (authListenerEnabled) {
+      unsub = onAuthStateChanged(auth, (user) => {
+        setCurrentUser(user || null);
+        console.log(user);
+      });
+    }
 
     return () => {
-      unsub();
+      if (unsub) {
+        unsub();
+      }
     };
-  }, []);
+  }, [authListenerEnabled]);
 
   return (
-    <AuthContext.Provider value={{ currentUser }}>
+    <AuthContext.Provider value={{ currentUser, setAuthListenerEnabled }}>
       {children}
     </AuthContext.Provider>
   );
 };
+
+

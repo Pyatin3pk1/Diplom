@@ -10,7 +10,7 @@ const RegisterPage = ({ title, handleClick }) => {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   const [passRepeat, setPassRepeat] = useState("");
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState("User"); 
   const [err, setErr] = useState(false);
   const navigate = useNavigate();
 
@@ -35,7 +35,7 @@ const RegisterPage = ({ title, handleClick }) => {
           uid: res.user.uid,
           displayName,
           email,
-          role: selectedRole,
+          role: selectedRole || "ivWEEXNdOD9zP4pInXCk", 
         });
         await setDoc(doc(db, "userChats", res.user.uid), {});
         navigate("/");
@@ -90,15 +90,6 @@ const RegisterPage = ({ title, handleClick }) => {
                   onChange={(e) => setPassRepeat(e.target.value)}
                   placeholder="Repeat password"
                 />
-              </div>
-              <div className="input-group">
-                <label htmlFor="role">Роль:</label>
-                <select id="role" onChange={(e) => setRole(e.target.value)}>
-                  <option value="">Выберите роль</option>
-                  <option value="Employee">Сотрудник</option>
-                  <option value="Manager">Менеджер</option>
-                  <option value="User">Пользователь</option>
-                </select>
               </div>
               <div className="input-group">
                 <button>Зарегистрироваться</button>

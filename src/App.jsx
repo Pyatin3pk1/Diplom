@@ -11,6 +11,8 @@ import {
 import Log from "./component/Login/Log";
 import ChatMes from "./component/Message/ChatMes";
 import Reg from "./component/Register/Reg";
+import EmployeePage from "./component/Employee/EmployeePage";
+
 
 const App = () => {
   const { currentUser } = useContext(AuthContext);
@@ -23,9 +25,11 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes >
+        
         <Route exact path="/login" element={<Log/>} />
         <Route exact path="/register" element={<Reg/>} />
         <Route exact path="/" element={<ChatMes/>} />
+        <Route exact path="/employee" element={<EmployeePage/>} />
         <Route
           exact path="/"
           element={

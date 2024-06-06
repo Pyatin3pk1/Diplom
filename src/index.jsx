@@ -7,15 +7,17 @@ import App from "./App";
 import "./firebase";
 import { AuthContextProvider } from "./component/Context/AuthContext";
 import { ChatContextProvider } from "./component/Context/ChatContext";
+import { UserListContextProvider } from "./component/Context/UserListContext";
 
 const root = createRoot(document.getElementById('root'));
 root.render(
   <AuthContextProvider>
     <ChatContextProvider>
+      <UserListContextProvider>
       <React.StrictMode>
           <App />
-    </React.StrictMode>
+      </React.StrictMode>
+      </UserListContextProvider>
     </ChatContextProvider>
-    
   </AuthContextProvider>,
 );
