@@ -44,10 +44,14 @@ const Employee = () => {
         const unsubscribe = onSnapshot(collection(db, 'users'), (snapshot) => {
             const users = snapshot.docs.map(doc => ({
                 uid: doc.id,
-                ...doc.data()
+                ...doc.data(),
+                photoURL: doc.data().photoURL instanceof Blob 
+                    ? URL.createObjectURL(doc.data().photoURL) 
+                    : doc.data().photoURL
             }));
+            console.log("Fetched users:", users); // Debug log
             setEmployees(users);
-            filterEmployeesByRole(selectedRole, users); // Фильтруем сотрудников по выбранной роли
+            filterEmployeesByRole(selectedRole, users); 
         });
 
         return () => unsubscribe();
@@ -69,40 +73,45 @@ const Employee = () => {
         const combinedId = currentUser.uid > u.uid
             ? currentUser.uid + u.uid
             : u.uid + currentUser.uid;
-
+    
         try {
             const res = await getDoc(doc(db, "chats", combinedId));
-
+    
             if (!res.exists()) {
                 await setDoc(doc(db, "chats", combinedId), { messages: [] });
-
+    
+                // Создаем документы в userChats, если их нет
+                await setDoc(doc(db, "userChats", currentUser.uid), {}, { merge: true });
+                await setDoc(doc(db, "userChats", u.uid), {}, { merge: true });
+    
                 await updateDoc(doc(db, "userChats", currentUser.uid), {
                     [combinedId + ".userInfo"]: {
                         uid: u.uid,
-                        displayName: u.displayName,
-                        photoURL: u.photoURL,
+                        displayName: u.displayName || '',
+                        photoURL: u.photoURL || '',
                     },
                     [combinedId + ".date"]: serverTimestamp(),
                 });
-
+    
                 await updateDoc(doc(db, "userChats", u.uid), {
                     [combinedId + ".userInfo"]: {
                         uid: currentUser.uid,
-                        displayName: currentUser.displayName,
-                        photoURL: currentUser.photoURL,
+                        displayName: currentUser.displayName || '',
+                        photoURL: currentUser.photoURL || '',
                     },
                     [combinedId + ".date"]: serverTimestamp(),
                 });
-
+    
                 dispatch({ type: "ADD_CHAT", payload: { uid: combinedId, members: [currentUser, u], messages: [] } });
             }
-
+    
             dispatch({ type: "CHANGE_USER", payload: u });
-            navigate('/'); 
+            navigate('/');
         } catch (err) {
             console.error(err);
         }
     };
+    
 
     const handleSearch = (e) => {
         const searchText = e.target.value.toLowerCase();
@@ -139,31 +148,37 @@ const Employee = () => {
     }, [employees, selectedRole]);
     
     const handleDeleteEmployee = async (employee) => {
+        const confirmDelete = window.confirm(`Вы уверены, что хотите удалить пользователя ${employee.displayName}?`);
+    
+        if (!confirmDelete) {
+            return;
+        }
+    
         try {
             await deleteDoc(doc(db, "users", employee.uid));
-
+    
             const combinedId = currentUser.uid > employee.uid
                 ? currentUser.uid + employee.uid
                 : employee.uid + currentUser.uid;
-
+    
             const chatDocRef = doc(db, "chats", combinedId);
             const chatDoc = await getDoc(chatDocRef);
-
+    
             if (chatDoc.exists()) {
                 await deleteDoc(chatDocRef);
-
+    
                 const currentUserChatRef = doc(db, "userChats", currentUser.uid);
                 const currentUserChatDoc = await getDoc(currentUserChatRef);
-
+    
                 if (currentUserChatDoc.exists()) {
                     await updateDoc(currentUserChatRef, {
                         [combinedId]: deleteField()
                     });
                 }
-
+    
                 const employeeChatRef = doc(db, "userChats", employee.uid);
                 const employeeChatDoc = await getDoc(employeeChatRef);
-
+    
                 if (employeeChatDoc.exists()) {
                     await updateDoc(employeeChatRef, {
                         [combinedId]: deleteField()
@@ -172,12 +187,12 @@ const Employee = () => {
             } else {
                 console.log(`Chat document does not exist for combined ID: ${combinedId}`);
             }
-
+    
             fetchUsers();
         } catch (err) {
             console.error(`Error deleting employee: ${err.message}`);
         }
-    };
+    };    
     const closeModal = () => {
         setAddModel(false);
         fetchUsers();
@@ -204,7 +219,7 @@ const Employee = () => {
                                 onClick={() => setAddModel((prev) => !prev)} 
                             />
                         </div>
-                         <select onChange={handleSortByRole} value={selectedRole}> 
+                        <select onChange={handleSortByRole} value={selectedRole}> 
                             <option value="">Выберите роль</option> 
                             {Object.entries(roles).map(([roleId, roleName]) => (
                                 <option key={roleId} value={roleId}>{roleName}</option>
@@ -215,13 +230,14 @@ const Employee = () => {
                         {filteredEmployees.length > 0 ? ( 
                             filteredEmployees.map((employee) => {
                                 const avatarUrl = employee.photoURL ? employee.photoURL : Avatar;
-    
+                                const birthdate = employee.birthdate ? new Date(employee.birthdate).toLocaleDateString() : '-';
                                 return (
                                     <div className="employee-item" key={employee.uid}>
                                         <div className="employee-item__content" onClick={() => handleSelect(employee)}>
                                             <img src={avatarUrl} alt='avatar'/>
                                             <div className="employeeList">
                                                 <label>{employee.displayName}</label>
+                                                <span>Дата рождения: {birthdate}</span>
                                                 <span>{departments[employee.department] || 'Отдел не найден'}</span>
                                                 <span>Роль: {roles[employee.role] || 'Роль не задана'}</span>
                                             </div>
@@ -234,7 +250,7 @@ const Employee = () => {
                             })
                         ) : (
                             <div className="notEmployees">
-                                <p>Пользоват не найдены</p>
+                                <p>Пользователи не найдены</p>
                             </div>
                         )}
                     </div>
@@ -242,8 +258,7 @@ const Employee = () => {
             </div>
             {addModel && <AddEmployee closeModal={closeModal} />}
         </div>
-    );
+    );    
 };
-    
+
 export default Employee;
-    

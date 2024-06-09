@@ -1,33 +1,24 @@
 import React, { useContext, useState } from 'react';
 import Attach from '../../../assets/attach-file.png';
 import { Timestamp, arrayUnion, doc, serverTimestamp, updateDoc } from 'firebase/firestore';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { db, storage } from '../../../firebase';
 import { v4 as uuid } from "uuid";
 import { AuthContext } from '../../Context/AuthContext';
 import { ChatContext } from '../../Context/ChatContext';
-import CryptoJS from 'crypto-js';
+import { encryptText } from './Crypto';
+import Delete from '../../../assets/delete.png';
 
 const Input = () => {
     const [text, setText] = useState("");
     const [file, setFile] = useState(null);
+    const [filePreview, setFilePreview] = useState(null);
 
     const { currentUser } = useContext(AuthContext);
     const { data } = useContext(ChatContext);
 
-    const MAX_MESSAGE_LENGTH = 500; // Максимальная длина сообщения
-    const MAX_FILE_SIZE_MB = 5; // Максимальный размер файла в МБ
-
-    const secretKey = 'your-secret-key';
-
-    const encryptText = (text) => {
-        return CryptoJS.AES.encrypt(text, secretKey).toString();
-    };
-
-    const decryptText = (ciphertext) => {
-        const bytes = CryptoJS.AES.decrypt(ciphertext, secretKey);
-        return bytes.toString(CryptoJS.enc.Utf8);
-    };
+    const MAX_MESSAGE_LENGTH = 500; 
+    const MAX_FILE_SIZE_MB = 5; 
 
     const handleSend = async () => {
         if (!text && !file) return;
@@ -102,6 +93,7 @@ const Input = () => {
 
             setText("");
             setFile(null);
+            setFilePreview(null);
         } catch (err) {
             console.error("Error sending message: ", err);
         }
@@ -112,28 +104,49 @@ const Input = () => {
         if (selectedFile && selectedFile.size / (1024 * 1024) > MAX_FILE_SIZE_MB) {
             alert(`Файл не может превышать ${MAX_FILE_SIZE_MB} МБ.`);
             setFile(null);
+            setFilePreview(null);
         } else {
             setFile(selectedFile);
             setText("");
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFilePreview(reader.result);
+            };
+            reader.readAsDataURL(selectedFile);
             console.log("File selected: ", selectedFile);
         }
     };
 
+    const handleFileRemove = () => {
+        setFile(null);
+        setFilePreview(null);
+    };
+
     return (
         <div className='input'>
-            <textarea
-                type="text"
-                value={text}
-                placeholder='Введите сообщение...'
-                onChange={e => {
-                    if (e.target.value.length <= MAX_MESSAGE_LENGTH) {
-                        setText(e.target.value);
-                    } else {
-                        alert(`Сообщение не может превышать ${MAX_MESSAGE_LENGTH} символов.`);
-                    }
-                }}
-            />
+            {filePreview && (
+                <div className="file-preview" style={{ cursor: 'pointer' }}>
+                    <img className="file-preview__delete" src={Delete} onClick={handleFileRemove} alt="Delete"/>
+                    { /\.(gif|jpe?g|tiff?|png|webp|bmp)$/i.test(file.name) ? (
+                        <img src={filePreview} alt="file preview" />
+                    ) : (
+                        <p>{file.name}</p>
+                    )}
+                </div>
+            )}
             <div className="send">
+                <textarea
+                    type="text"
+                    value={text}
+                    placeholder='Введите сообщение...'
+                    onChange={e => {
+                        if (e.target.value.length <= MAX_MESSAGE_LENGTH) {
+                            setText(e.target.value);
+                        } else {
+                            alert(`Сообщение не может превышать ${MAX_MESSAGE_LENGTH} символов.`);
+                        }
+                    }}
+                />
                 <input type="file" onChange={handleFileChange} style={{ display: "none" }} id="file" />
                 <label htmlFor="file">
                     <img src={Attach} alt="Attach" />

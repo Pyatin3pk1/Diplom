@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { auth, db } from '../../../firebase';
+import { auth, db, storage } from '../../../firebase';
 import { collection, getDocs, doc, setDoc } from 'firebase/firestore';
 import { createUserWithEmailAndPassword, updateProfile, signOut, signInWithEmailAndPassword } from 'firebase/auth';
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import Avatar from "../../../assets/avatar.png";
 import { AuthContext } from "../../Context/AuthContext";
 import "./addEmployee.css";
@@ -16,6 +17,7 @@ const AddEmployee = ({ closeModal }) => {
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [birthdate, setBirthdate] = useState(""); // Новое состояние для даты рождения
     const [selectedRole, setSelectedRole] = useState("");
     const [selectedDepartment, setSelectedDepartment] = useState("");
     const [err, setErr] = useState(false);
@@ -27,8 +29,8 @@ const AddEmployee = ({ closeModal }) => {
             const rolesSnapshot = await getDocs(rolesCollection);
             const departmentsSnapshot = await getDocs(departmentsCollection);
 
-            setRoles(rolesSnapshot.docs.map(doc => ({ uid: doc.uid, ...doc.data() })));
-            setDepartments(departmentsSnapshot.docs.map(doc => ({ uid: doc.uid, ...doc.data() })));
+            setRoles(rolesSnapshot.docs.map(doc => ({ uid: doc.id, ...doc.data() })));
+            setDepartments(departmentsSnapshot.docs.map(doc => ({ uid: doc.id, ...doc.data() })));
         };
 
         fetchRolesAndDepartments();
@@ -43,21 +45,27 @@ const AddEmployee = ({ closeModal }) => {
         }
     };
 
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // Отключаем прослушиватель изменений состояния аутентификации
             setAuthListenerEnabled(false);
 
-            // Создаем нового пользователя
             const res = await createUserWithEmailAndPassword(auth, email, password);
-            await updateProfile(res.user, { displayName: fullName,  photoURL: avatar.url, role: selectedRole});
+            let photoURL = avatar.url;
+
+            if (avatar.file) {
+                const storageRef = ref(storage, `avatars/${res.user.uid}`);
+                await uploadBytes(storageRef, avatar.file);
+                photoURL = await getDownloadURL(storageRef);
+            }
+
+            await updateProfile(res.user, { displayName: fullName, photoURL });
             await setDoc(doc(db, "users", res.user.uid), {
                 uid: res.user.uid,
                 displayName: fullName,
-                photoURL: avatar.url,
+                photoURL,
                 email,
+                birthdate,  // Сохраняем дату рождения
                 role: selectedRole,
                 department: selectedDepartment,
             });
@@ -75,7 +83,7 @@ const AddEmployee = ({ closeModal }) => {
             closeModal();
         } catch (err) {
             console.error("Ошибка при регистрации:", err);
-            if (err.code.includes("auth/")) {
+            if (err.code && err.code.includes("auth/")) {
                 alert("Ошибка при регистрации: " + err.message);
                 setErr(true);
             } else {
@@ -112,6 +120,12 @@ const AddEmployee = ({ closeModal }) => {
                         placeholder='Введите пароль' 
                         value={password} 
                         onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <input 
+                        type="date" 
+                        placeholder='Введите дату рождения' 
+                        value={birthdate} 
+                        onChange={(e) => setBirthdate(e.target.value)}
                     />
                     <select 
                         name="role" 

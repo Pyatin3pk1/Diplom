@@ -1,6 +1,6 @@
 import CryptoJS from 'crypto-js';
 
-const secretKey = 'your-secret-key';
+const secretKey = 'MIIEpAIBAAKCAQEAzNQwRtGZFbq2BOE93hR0SRXoS42G27L2Ewp0AB/J7vtn4WWf';
 
 const decryptText = (ciphertext) => {
     if (!ciphertext) return null;  // Добавим проверку на пустую строку
@@ -13,5 +13,8 @@ const decryptText = (ciphertext) => {
         return null;
     }
 };
+const encryptText = (text) => {
+    return CryptoJS.AES.encrypt(text, secretKey).toString();
+};
 
-export { decryptText };
+export { decryptText, encryptText };

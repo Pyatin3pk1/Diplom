@@ -3,14 +3,11 @@ import { UserListContext } from '../Context/UserListContext';
 import { AuthContext } from '../Context/AuthContext';
 import { ChatContext } from '../Context/ChatContext';
 import Search from '../../assets/search.png';
-import Plus from '../../assets/plus.png';
-import Minus from '../../assets/minus.png';
 import Avatar from "../../assets/avatar.png";
 import { doc, onSnapshot, serverTimestamp, setDoc, updateDoc, getDoc, deleteDoc, deleteField } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { useNavigate } from 'react-router-dom';
-import AddEmployee from './addEmployee/AddEmployee';
-import Delete from '../../assets/delete.png';
+
 
 const ListEmployee = () => {
     const navigate = useNavigate();
@@ -50,8 +47,8 @@ const ListEmployee = () => {
                 await updateDoc(doc(db, "userChats", currentUser.uid), {
                     [combinedId + ".userInfo"]: {
                         uid: u.uid,
-                        displayName: u.displayName,
-                        photoURL: u.photoURL,
+                        displayName: u.displayName || '',
+                        photoURL: u.photoURL || '',
                     },
                     [combinedId + ".date"]: serverTimestamp(),
                 });
@@ -59,8 +56,8 @@ const ListEmployee = () => {
                 await updateDoc(doc(db, "userChats", u.uid), {
                     [combinedId + ".userInfo"]: {
                         uid: currentUser.uid,
-                        displayName: currentUser.displayName,
-                        photoURL: currentUser.photoURL,
+                        displayName: currentUser.displayName || '',
+                        photoURL: currentUser.photoURL || '',
                     },
                     [combinedId + ".date"]: serverTimestamp(),
                 });

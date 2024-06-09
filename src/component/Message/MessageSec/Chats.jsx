@@ -35,6 +35,12 @@ const Chats = () => {
             return;
         }
 
+        const confirmDelete = window.confirm(`Вы уверены, что хотите удалить чат с ${userInfo.displayName}?`);
+
+        if (!confirmDelete) {
+            return;
+        }
+
         const combinedId = currentUser.uid > userInfo.uid
             ? currentUser.uid + userInfo.uid
             : userInfo.uid + currentUser.uid;
@@ -64,7 +70,6 @@ const Chats = () => {
         <div className='chats'>
             {chats && Object.entries(chats).map(([chatId, chat]) => {
                 const avatarUrl = chat.userInfo.photoURL ? chat.userInfo.photoURL : Avatar;
-                console.log(avatarUrl);
                 return (
                     <div className="userChat" key={chatId}>
                         <div className="userChatInfo" onClick={() => handleSelect(chat.userInfo)}>

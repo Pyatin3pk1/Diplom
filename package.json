@@ -12,7 +12,8 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.3",
     "crypto-js": "^4.2.0",
-    "firebase": "^10.6.0",
+    "date-fns": "^3.6.0",
+    "firebase": "^10.12.2",
     "firebase-admin": "^12.1.1",
     "firebase-functions": "^5.0.1",
     "react": "^18.2.0",

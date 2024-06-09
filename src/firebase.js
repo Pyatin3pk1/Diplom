@@ -1,9 +1,7 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 import { getFirestore } from "firebase/firestore";
-import { getFunctions } from "firebase/functions"; // Добавьте этот импорт
 
 const firebaseConfig = {
   apiKey: "AIzaSyBdrU7W19L7C28ma-6J-x93rz3zvElV2lc",
@@ -19,4 +17,3 @@ export const app = initializeApp(firebaseConfig);
 export const auth = getAuth();
 export const storage = getStorage();
 export const db = getFirestore(app);
-export const functions = getFunctions(app);

@@ -68,38 +68,58 @@ const ListUser = () => {
         const combinedId = currentUser.uid > u.uid
             ? currentUser.uid + u.uid
             : u.uid + currentUser.uid;
-
+    
         try {
-            const res = await getDoc(doc(db, "chats", combinedId));
-
-            if (!res.exists()) {
-                await setDoc(doc(db, "chats", combinedId), { messages: [] });
-
-                await updateDoc(doc(db, "userChats", currentUser.uid), {
-                    [combinedId + ".userInfo"]: {
-                        uid: u.uid,
-                        displayName: u.displayName,
-                        photoURL: u.photoURL,
-                    },
-                    [combinedId + ".date"]: serverTimestamp(),
-                });
-
-                await updateDoc(doc(db, "userChats", u.uid), {
-                    [combinedId + ".userInfo"]: {
-                        uid: currentUser.uid,
-                        displayName: currentUser.displayName,
-                        photoURL: currentUser.photoURL,
-                    },
-                    [combinedId + ".date"]: serverTimestamp(),
-                });
-
-                dispatch({ type: "ADD_CHAT", payload: { uid: combinedId, members: [currentUser, u], messages: [] } });
+            // Проверка и создание документа чата, если его нет
+            const chatDocRef = doc(db, "chats", combinedId);
+            const chatDocSnap = await getDoc(chatDocRef);
+    
+            if (!chatDocSnap.exists()) {
+                await setDoc(chatDocRef, { messages: [] });
             }
-
+    
+            // Проверка и создание документа userChats для текущего пользователя
+            const currentUserChatRef = doc(db, "userChats", currentUser.uid);
+            const currentUserChatSnap = await getDoc(currentUserChatRef);
+    
+            if (!currentUserChatSnap.exists()) {
+                await setDoc(currentUserChatRef, {});
+            }
+    
+            // Проверка и создание документа userChats для выбранного пользователя
+            const selectedUserChatRef = doc(db, "userChats", u.uid);
+            const selectedUserChatSnap = await getDoc(selectedUserChatRef);
+    
+            if (!selectedUserChatSnap.exists()) {
+                await setDoc(selectedUserChatRef, {});
+            }
+    
+            // Обновление документов userChats для текущего и выбранного пользователей
+            await updateDoc(currentUserChatRef, {
+                [combinedId + ".userInfo"]: {
+                    uid: u.uid,
+                    displayName: u.displayName || '',
+                    photoURL: u.photoURL || '',
+                },
+                [combinedId + ".date"]: serverTimestamp(),
+            });
+    
+            await updateDoc(selectedUserChatRef, {
+                [combinedId + ".userInfo"]: {
+                    uid: currentUser.uid,
+                    displayName: currentUser.displayName || '',
+                    photoURL: currentUser.photoURL || '',
+                },
+                [combinedId + ".date"]: serverTimestamp(),
+            });
+    
+            // Обновление состояния чатов в контексте
+            dispatch({ type: "ADD_CHAT", payload: { uid: combinedId, members: [currentUser, u], messages: [] } });
+    
             dispatch({ type: "CHANGE_USER", payload: u });
-            navigate('/'); 
+            navigate('/');
         } catch (err) {
-            console.error(err);
+            console.error("Ошибка при создании или получении чата:", err);
         }
     };
 

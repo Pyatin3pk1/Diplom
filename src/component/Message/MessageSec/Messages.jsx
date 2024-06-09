@@ -1,29 +1,37 @@
-import React, { useContext, useEffect, useState } from 'react';
-import Message from './Message';
-import { doc, onSnapshot } from 'firebase/firestore';
-import { db } from '../../../firebase';
+import React, { useContext } from 'react';
 import { ChatContext } from '../../Context/ChatContext';
+import Message from './Message';
+import { isSameDay } from 'date-fns';
 
 const Messages = () => {
-    const [messages, setMessages] = useState([])
-    const {data} = useContext(ChatContext);
+    const { data } = useContext(ChatContext);
 
-    useEffect(()=>{
-        const unSub = onSnapshot(doc(db,"chats", data.chatId), (doc)=>{
-            doc.exists() && setMessages(doc.data().messages)
-        })
+    console.log("ChatContext data:", data); // Для отладки
 
-        return ()=>{
-            unSub()
-        }
-    },[data.chatId])
+    // Проверка наличия сообщений
+    if (!data || !data.messages || !Array.isArray(data.messages)) {
+        return <div>No messages available</div>;
+    }
+
+    // Сортировка сообщений по дате
+    const sortedMessages = data.messages.sort((a, b) => a.date.toDate() - b.date.toDate());
+
+    const checkShowDate = (index) => {
+        if (index === 0) return true;
+        const currentMessageDate = sortedMessages[index].date.toDate();
+        const previousMessageDate = sortedMessages[index - 1].date.toDate();
+        return !isSameDay(currentMessageDate, previousMessageDate);
+    };
 
     return (
-        <div className='messages'>
-            {messages.map(m=>(
-                <Message message={m} key={m.id}/>
+        <div className="messages">
+            {sortedMessages.map((message, index) => (
+                <Message 
+                    key={message.id} 
+                    message={message} 
+                    showDate={checkShowDate(index)}
+                />
             ))}
-
         </div>
     );
 };
