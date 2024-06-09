@@ -67,10 +67,9 @@ const Message = ({ message, showDate }) => {
             {showDate && <div className="message-date">{formatDateForHeader(message.date)}</div>}
             <div ref={ref} className={`message ${message.senderId === currentUser.uid && "owner"}`}>
                 <div className="massageContent">
-                    {decryptedText ? (
-                        <p>{decryptedText}</p>
-                    ) : decryptedFile ? (
-                        <>
+                    {decryptedText && <p>{decryptedText}</p>}
+                    {decryptedFile && (
+                        <div>
                             { /.*\.(gif|jpe?g|tiff?|png|webp|bmp)$/i.test(fileName) ? (
                                 <img src={decryptedFile} alt="img" onClick={handleImageClick} />
                             ) : (
@@ -86,8 +85,8 @@ const Message = ({ message, showDate }) => {
                                     </a>
                                 </p>
                             )}
-                        </>
-                    ) : null}
+                        </div>
+                    )}
                     <span>{formatDate(message.date)}</span>
                 </div>
             </div>

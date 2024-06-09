@@ -103,13 +103,14 @@ const ListEmployee = () => {
                         {filteredEmployees.length > 0 ? (
                             filteredEmployees.map((employee) => {
                                 const avatarUrl = employee.photoURL ? employee.photoURL : Avatar;
-
+                                const birthdate = employee.birthdate ? new Date(employee.birthdate).toLocaleDateString() : '-';
                                 return (
                                     <div className="employee-item" key={employee.uid}>
                                         <div className="employee-item__content" onClick={() => handleSelect(employee)}>
                                             <img src={avatarUrl} alt='avatar'/>
                                             <div className="employeeList">
                                                 <label>{employee.displayName}</label>
+                                                <span>Дата рождения: {birthdate}</span>
                                                 <span>{departments[employee.department] || 'Отдел не найден'}</span>
                                             </div>
                                         </div>

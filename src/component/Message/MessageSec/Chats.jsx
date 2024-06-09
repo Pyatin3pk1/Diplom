@@ -10,28 +10,36 @@ const Chats = () => {
     const [chats, setChats] = useState([]);
     const { currentUser } = useContext(AuthContext);
     const { dispatch } = useContext(ChatContext);
+    const [lastPageUpdate, setLastPageUpdate] = useState(
+        parseInt(localStorage.getItem('lastPageUpdate')) || Date.now()
+    );
 
     useEffect(() => {
         if (currentUser && currentUser.uid) {
-            const getChats = () => {
-                const unsub = onSnapshot(doc(db, "userChats", currentUser.uid), (doc) => {
-                    setChats(doc.data() || []);
-                });
+            const unsubscribe = onSnapshot(doc(db, "userChats", currentUser.uid), (doc) => {
+                const userChats = doc.exists() ? doc.data() : {};
+                setChats(Object.entries(userChats).map(([chatId, chat]) => ({ ...chat, chatId })));
+            });
 
-                return () => {
-                    unsub();
-                };
-            };
-            getChats();
+            return () => unsubscribe();
         }
     }, [currentUser]);
 
-    const handleSelect = (u) => {
-        dispatch({ type: "CHANGE_USER", payload: u });
+    const handleSelect = (chatId, userInfo) => {
+        dispatch({ type: "CHANGE_USER", payload: userInfo });
+        // Update lastMessageTimes only if it's not already set for this chatId
+        try {
+            const chatDocRef = doc(db, "userChats", currentUser.uid);
+            updateDoc(chatDocRef, {
+                [`${chatId}.lastMessage.isRead`]: true
+            });
+        } catch (error) {
+            console.error("Error updating lastMessage: ", error);
+        }
     };
 
-    const handleDeleteChat = async (userInfo) => {
-        if (!currentUser || !currentUser.uid || !userInfo || !userInfo.uid) {
+    const handleDeleteChat = async (userInfo, chatId) => {
+        if (!currentUser || !currentUser.uid || !userInfo || !userInfo.uid || !chatId) {
             return;
         }
 
@@ -41,24 +49,20 @@ const Chats = () => {
             return;
         }
 
-        const combinedId = currentUser.uid > userInfo.uid
-            ? currentUser.uid + userInfo.uid
-            : userInfo.uid + currentUser.uid;
-
         try {
-            await deleteDoc(doc(db, "chats", combinedId));
+            await deleteDoc(doc(db, "chats", chatId));
 
             await updateDoc(doc(db, "userChats", currentUser.uid), {
-                [combinedId]: deleteField()
+                [chatId]: deleteField()
             });
 
             await updateDoc(doc(db, "userChats", userInfo.uid), {
-                [combinedId]: deleteField()
+                [chatId]: deleteField()
             });
 
             setChats(prevChats => {
                 const newChats = { ...prevChats };
-                delete newChats[combinedId];
+                delete newChats[chatId];
                 return newChats;
             });
         } catch (err) {
@@ -66,17 +70,22 @@ const Chats = () => {
         }
     };
 
+    useEffect(() => {
+        localStorage.setItem('lastPageUpdate', lastPageUpdate.toString());
+    }, [lastPageUpdate]);
+
     return (
         <div className='chats'>
-            {chats && Object.entries(chats).map(([chatId, chat]) => {
-                const avatarUrl = chat.userInfo.photoURL ? chat.userInfo.photoURL : Avatar;
+            {chats && chats.map((chat) => {
+                const avatarUrl = chat.userInfo?.photoURL ? chat.userInfo.photoURL : Avatar;
+                const isRead = chat.lastMessage?.isRead;
                 return (
-                    <div className="userChat" key={chatId}>
-                        <div className="userChatInfo" onClick={() => handleSelect(chat.userInfo)}>
+                    <div className={`userChat ${isRead ? 'read' : 'unread'}`} key={chat.chatId}>
+                        <div className="userChatInfo" onClick={() => handleSelect(chat.chatId, chat.userInfo)}>
                             <img src={avatarUrl} alt="" />
-                            <span>{chat.userInfo.displayName}</span>
+                            <span>{chat.userInfo?.displayName}</span>
                         </div>
-                        <button className="deleteChat" onClick={() => handleDeleteChat(chat.userInfo)}> 
+                        <button className="deleteChat" onClick={() => handleDeleteChat(chat.userInfo, chat.chatId)}> 
                             <img src={Delete} alt="Delete"/>
                         </button>
                     </div>

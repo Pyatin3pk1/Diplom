@@ -503,7 +503,7 @@ body {
           font-size: 24px;
           cursor: pointer;
           justify-content: space-between;
-  
+          
           &:hover {
             background-color: lightgray;
           }
@@ -563,6 +563,13 @@ body {
               }
           }
         }
+        .read {
+          background-color: #00b4d8; 
+        }
+        .unread {
+            background-color: rgb(0, 255, 221); 
+        }
+
       }
   
       .chat {
@@ -762,6 +769,7 @@ body {
               }
       
               button {
+                all: inherit;
                   background-color: #00b4d8;
               }
           }

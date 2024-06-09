@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import Attach from '../../../assets/attach-file.png';
 import { Timestamp, arrayUnion, doc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -8,12 +8,13 @@ import { AuthContext } from '../../Context/AuthContext';
 import { ChatContext } from '../../Context/ChatContext';
 import { encryptText } from './Crypto';
 import Delete from '../../../assets/delete.png';
+import Shipment from '../../../assets/shipment.png';
 
 const Input = () => {
     const [text, setText] = useState("");
     const [file, setFile] = useState(null);
     const [filePreview, setFilePreview] = useState(null);
-
+    const [messageSent, setMessageSent] = useState(false);
     const { currentUser } = useContext(AuthContext);
     const { data } = useContext(ChatContext);
 
@@ -76,24 +77,22 @@ const Input = () => {
             });
 
             await updateDoc(doc(db, "userChats", currentUser.uid), {
-                [data.chatId + ".lastMessage"]: {
-                    text: encryptedText,
-                    file: downloadURL || null,
-                },
-                [data.chatId + ".date"]: serverTimestamp(),
+                [`${data.chatId}.lastMessage.isRead`]: true, // Изменено здесь
             });
 
             await updateDoc(doc(db, "userChats", data.user.uid), {
-                [data.chatId + ".lastMessage"]: {
+                [`${data.chatId}.lastMessage`]: {
                     text: encryptedText,
                     file: downloadURL || null,
+                    isRead: false, // Добавлено здесь
                 },
-                [data.chatId + ".date"]: serverTimestamp(),
+                [`${data.chatId}.date`]: serverTimestamp(),
             });
 
             setText("");
             setFile(null);
             setFilePreview(null);
+            setMessageSent(true);
         } catch (err) {
             console.error("Error sending message: ", err);
         }
@@ -107,7 +106,6 @@ const Input = () => {
             setFilePreview(null);
         } else {
             setFile(selectedFile);
-            setText("");
             const reader = new FileReader();
             reader.onloadend = () => {
                 setFilePreview(reader.result);
@@ -121,6 +119,17 @@ const Input = () => {
         setFile(null);
         setFilePreview(null);
     };
+
+    useEffect(() => {
+        // Reset messageSent state after a certain delay
+        let timer;
+        if (messageSent) {
+            timer = setTimeout(() => {
+                setMessageSent(false);
+            }, 3000); 
+        }
+        return () => clearTimeout(timer);
+    }, [messageSent]);
 
     return (
         <div className='input'>
@@ -151,7 +160,7 @@ const Input = () => {
                 <label htmlFor="file">
                     <img src={Attach} alt="Attach" />
                 </label>
-                <button onClick={handleSend}>Отправить</button>
+                <img src={Shipment} alt="" onClick={handleSend} style={{ cursor: messageSent ? 'not-allowed' : 'pointer' }} />
             </div>
         </div>
     );
