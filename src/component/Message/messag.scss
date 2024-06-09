@@ -617,17 +617,18 @@ body {
               background: #f1f1f1;
               border-radius: 10px;
           }
+          .message-date{
+            background: #00b4d8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+          }
+
           .message {
             display: flex;
             flex-direction: column;
 
-            .message-date{
-              background: #00b4d8;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              border-radius: 20px;
-            }
   
             .massageInfo {
               display: flex;

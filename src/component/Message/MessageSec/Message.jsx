@@ -63,33 +63,36 @@ const Message = ({ message, showDate }) => {
     };
 
     return (
-        <div ref={ref} className={`message ${message.senderId === currentUser.uid && "owner"}`}>
+        <>
             {showDate && <div className="message-date">{formatDateForHeader(message.date)}</div>}
-            <div className="massageContent">
-                {decryptedText ? (
-                    <p>{decryptedText}</p>
-                ) : decryptedFile ? (
-                    <>
-                        { /.*\.(gif|jpe?g|tiff?|png|webp|bmp)$/i.test(fileName) ? (
-                            <img src={decryptedFile} alt="img" onClick={handleImageClick} />
-                        ) : (
-                            <p>                    
-                                {fileName}
-                                <a
-                                    href={decryptedFile}
-                                    download={fileName}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    <img src={Doc} alt="" />
-                                </a>
-                            </p>
-                        )}
-                    </>
-                ) : null}
-                <span>{formatDate(message.date)}</span>
+            <div ref={ref} className={`message ${message.senderId === currentUser.uid && "owner"}`}>
+                <div className="massageContent">
+                    {decryptedText ? (
+                        <p>{decryptedText}</p>
+                    ) : decryptedFile ? (
+                        <>
+                            { /.*\.(gif|jpe?g|tiff?|png|webp|bmp)$/i.test(fileName) ? (
+                                <img src={decryptedFile} alt="img" onClick={handleImageClick} />
+                            ) : (
+                                <p>                    
+                                    {fileName}
+                                    <a
+                                        href={decryptedFile}
+                                        download={fileName}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        <img src={Doc} alt="" />
+                                    </a>
+                                </p>
+                            )}
+                        </>
+                    ) : null}
+                    <span>{formatDate(message.date)}</span>
+                </div>
             </div>
-        </div>
+        </>
+        
     );
 };
 
