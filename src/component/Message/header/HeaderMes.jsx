@@ -34,7 +34,7 @@ const HeaderMes = () => {
               </li>
               <li>
                 <button className="menu-button" onClick={() => setOpen(!isOpen)}><GiHamburgerMenu /></button>
-                <button className="button-logaut" onClick={() => { signOut(auth); navigate("/login") }}>Выход</button>
+                <button className="button-logaut" onClick={() => { signOut(auth); navigate("/Diplom/login") }}>Выход</button>
               </li>
             </ul>
           </nav>
