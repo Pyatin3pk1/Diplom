@@ -8,59 +8,66 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import Avatar from "../../assets/avatar.png";
 
 const RegisterPage = () => {
-  const [fullName, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordRepeat, setPasswordRepeat] = useState("");  
-  const [err, setErr] = useState(false);
-  const navigate = useNavigate();
+    const navigate = useNavigate();
   const [avatar, setAvatar] = useState({ file: null, url: "" });
-  const [birthdate, setBirthdate] = useState("");
-
+  const [err, setErr] = useState(false);
+  
   const handleAvatar = e => {
     if (e.target.files[0]) {
         setAvatar({
             file: e.target.files[0],
-            url: URL.createObjectURL(e.target.files[0]) // Сохраняем URL изображения
+            url: URL.createObjectURL(e.target.files[0]) 
         });
     }
 };
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    let photoURL = avatar.url;
-    if (password !== passwordRepeat || password.length < 6) {
-      alert(`Пароль не совпадают либо его длина меньше 6 символов`);
-    } else {
+  if (form.password !== form.passwordRepeat || form.password.length < 6) {
+      alert('Пароль не совпадают либо его длина меньше 6 символов');
+  } else {
       try {
-        const res = await createUserWithEmailAndPassword(auth, email, password);
-            let photoURL = avatar.url;
+          const res = await createUserWithEmailAndPassword(auth, form.email, form.password);
+          let photoURL = avatar.url;
 
-            if (avatar.file) {
-                const storageRef = ref(storage, `avatars/${res.user.uid}`);
-                await uploadBytes(storageRef, avatar.file);
-                photoURL = await getDownloadURL(storageRef);
-            }
+          if (avatar.file) {
+              const storageRef = ref(storage, `avatars/${res.user.uid}`);
+              await uploadBytes(storageRef, avatar.file);
+              photoURL = await getDownloadURL(storageRef);
+          }
 
-            await updateProfile(res.user, { displayName: fullName, photoURL });
-            await setDoc(doc(db, "users", res.user.uid), {
-                uid: res.user.uid,
-                displayName: fullName,
-                photoURL,
-                email,
-                birthdate, 
-                role: "ivWEEXNdOD9zP4pInXCk",
-            });
-            await setDoc(doc(db, "userChats", res.user.uid), {});
-        
-        // Перенаправление на главную страницу
-        navigate("/");
-      } catch (err) {
-        setErr(true);
+          await updateProfile(res.user, { displayName: form.fullName, photoURL });
+          await setDoc(doc(db, "users", res.user.uid), {
+              uid: res.user.uid,
+              displayName: form.fullName,
+              photoURL,
+              email: form.email,
+              birthdate: form.birthdate,
+              role: "ivWEEXNdOD9zP4pInXCk",
+          });
+          await setDoc(doc(db, "userChats", res.user.uid), {});
+
+          navigate("/");
+      } catch (error) {
+          setErr(true);
+          console.error("Ошибка при регистрации: ", error);
       }
-    }
-  };
-
+  }
+};
+const [form, setForm] =useState({
+  fullName: "",
+  email: "",
+  password: "",
+  passwordRepeat: "",
+  birthdate: "",
+});
+const handleChange = (e) => {
+  const {name, value} = e.target;
+  setForm({
+    ...form,
+    [name] : value,
+  });
+};
   return (
     <>
       <div className="container-log">
@@ -75,43 +82,44 @@ const RegisterPage = () => {
                         <img src={avatar.url || Avatar} alt="" />
                         Загрузите изображение
                   </label>
-                  <input type="file" id='file' style={{ display: "none" }} onChange={handleAvatar} />
+                  <input type="file" id='file' 
+                  style={{ display: "none" }} onChange={handleAvatar} />
                 </div>
                 <label htmlFor="text">ФИО:</label>
-                <input
-                  type="text"
-                  id="text"
-                  value={fullName}
-                  onChange={(e) => setName(e.target.value)}
+                <input type="text" id="text" name="fullName"
+                  value={form.fullName}
+                  onChange={handleChange}
                   placeholder="Введите имя пользователя"
                 />
                 <label htmlFor="text">Дата рождения:</label>
-                <input 
-                        type="date" 
-                        placeholder='Введите дату рождения' 
-                        value={birthdate} 
-                        onChange={(e) => setBirthdate(e.target.value)}
+                <input type="date" name="birthdate" 
+                  placeholder='Введите дату рождения' 
+                  value={form.birthdate} 
+                   onChange={handleChange}
                 />
                 <label htmlFor="email">Email:</label>
                 <input
                   type="email"
                   id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  name="email"
+                  value={form.email}
+                  onChange={handleChange}
                   placeholder="email"
                 />
                 <label htmlFor="password">Пароль:</label>
                 <input
                   type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)} // Исправлено на обновление состояния password
+                  name="password"
+                  value={form.password}
+                  onChange={handleChange} 
                   placeholder="password"
                 />
                 <label htmlFor="password">Повторите пароль:</label>
                 <input
                   type="password"
-                  value={passwordRepeat}
-                  onChange={(e) => setPasswordRepeat(e.target.value)} // Исправлено на обновление состояния passwordRepeat
+                  name="passwordRepeat"
+                  value={form.passwordRepeat}
+                  onChange={handleChange}
                   placeholder="Repeat password"
                 />
                 <button>Зарегистрироваться</button>

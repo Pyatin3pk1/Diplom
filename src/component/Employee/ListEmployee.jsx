@@ -7,7 +7,7 @@ import Avatar from "../../assets/avatar.png";
 import { doc, onSnapshot, serverTimestamp, setDoc, updateDoc, getDoc, deleteDoc, deleteField } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { useNavigate } from 'react-router-dom';
-
+import handleSelect from './handleSelect';
 
 const ListEmployee = () => {
     const navigate = useNavigate();
@@ -17,7 +17,9 @@ const ListEmployee = () => {
     const { currentUser } = useContext(AuthContext);
     const { dispatch } = useContext(ChatContext);
     const { employees, departments, fetchUsers } = useContext(UserListContext);
-
+    const handleClick = (u) => {
+        handleSelect(u, navigate, currentUser, dispatch);
+    };
     useEffect(() => {
         if (currentUser && currentUser.uid) {
             const getChats = () => {
@@ -32,56 +34,12 @@ const ListEmployee = () => {
             getChats();
         }
     }, [currentUser]);
-
-    const handleSelect = async (u) => {
-        const combinedId = currentUser.uid > u.uid
-            ? currentUser.uid + u.uid
-            : u.uid + currentUser.uid;
-
-        try {
-            const res = await getDoc(doc(db, "chats", combinedId));
-
-            if (!res.exists()) {
-                await setDoc(doc(db, "chats", combinedId), { messages: [] });
-
-                await updateDoc(doc(db, "userChats", currentUser.uid), {
-                    [combinedId + ".userInfo"]: {
-                        uid: u.uid,
-                        displayName: u.displayName || '',
-                        photoURL: u.photoURL || '',
-                    },
-                    [combinedId + ".date"]: serverTimestamp(),
-                });
-
-                await updateDoc(doc(db, "userChats", u.uid), {
-                    [combinedId + ".userInfo"]: {
-                        uid: currentUser.uid,
-                        displayName: currentUser.displayName || '',
-                        photoURL: currentUser.photoURL || '',
-                    },
-                    [combinedId + ".date"]: serverTimestamp(),
-                });
-
-                dispatch({ type: "ADD_CHAT", payload: { uid: combinedId, members: [currentUser, u], messages: [] } });
-            }
-
-            dispatch({ type: "CHANGE_USER", payload: u });
-            navigate('/'); 
-        } catch (err) {
-            console.error(err);
-        }
-    };
-
     const handleSearch = (e) => {
         setSearchText(e.target.value);
     };
-    
-
     const filteredEmployees = employees.filter(employee =>
         employee.displayName && employee.displayName.toLowerCase().includes(searchText.toLowerCase())
     );
-
-
     return (
         <div className="home">
             <div className="container">
@@ -106,7 +64,7 @@ const ListEmployee = () => {
                                 const birthdate = employee.birthdate ? new Date(employee.birthdate).toLocaleDateString() : '-';
                                 return (
                                     <div className="employee-item" key={employee.uid}>
-                                        <div className="employee-item__content" onClick={() => handleSelect(employee)}>
+                                        <div className="employee-item__content" onClick={() => handleClick(employee)}>
                                             <img src={avatarUrl} alt='avatar'/>
                                             <div className="employeeList">
                                                 <label>{employee.displayName}</label>

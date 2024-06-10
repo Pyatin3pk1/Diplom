@@ -18,7 +18,8 @@ const Chats = () => {
         if (currentUser && currentUser.uid) {
             const unsubscribe = onSnapshot(doc(db, "userChats", currentUser.uid), (doc) => {
                 const userChats = doc.exists() ? doc.data() : {};
-                setChats(Object.entries(userChats).map(([chatId, chat]) => ({ ...chat, chatId })));
+                const chatArray = Object.entries(userChats).map(([chatId, chat]) => ({ ...chat, chatId }));
+                setChats(chatArray);
             });
 
             return () => unsubscribe();
@@ -27,7 +28,6 @@ const Chats = () => {
 
     const handleSelect = (chatId, userInfo) => {
         dispatch({ type: "CHANGE_USER", payload: userInfo });
-        // Update lastMessageTimes only if it's not already set for this chatId
         try {
             const chatDocRef = doc(db, "userChats", currentUser.uid);
             updateDoc(chatDocRef, {
@@ -60,11 +60,7 @@ const Chats = () => {
                 [chatId]: deleteField()
             });
 
-            setChats(prevChats => {
-                const newChats = { ...prevChats };
-                delete newChats[chatId];
-                return newChats;
-            });
+            setChats(prevChats => prevChats.filter(chat => chat.chatId !== chatId));
         } catch (err) {
             console.error(err);
         }
@@ -76,7 +72,7 @@ const Chats = () => {
 
     return (
         <div className='chats'>
-            {chats && chats.map((chat) => {
+            {Array.isArray(chats) && chats.map((chat) => {
                 const avatarUrl = chat.userInfo?.photoURL ? chat.userInfo.photoURL : Avatar;
                 const isRead = chat.lastMessage?.isRead;
                 return (

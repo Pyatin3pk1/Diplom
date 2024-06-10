@@ -31,7 +31,7 @@ const LoginPage = ({title, handleClick}) => {
                 <div className="container-blur">
                     <div className="login-container">
                         <h3>Авторизация</h3>
-                        {errMessage && <p color='#FF0000'>{errMessage}</p>}
+                        {errMessage && <p>{errMessage}</p>}
                         <form onSubmit={handleSubmit}>
                             <div className="input-group">
                                 <label htmlFor="email">Email:</label>

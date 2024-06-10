@@ -6,24 +6,21 @@ import Search from '../../assets/search.png';
 import Plus from '../../assets/plus.png';
 import Minus from '../../assets/minus.png';
 import Avatar from "../../assets/avatar.png";
-import { collection, doc, onSnapshot, serverTimestamp, setDoc, updateDoc, getDoc, deleteDoc, deleteField } from 'firebase/firestore';
+import { collection, doc, onSnapshot, updateDoc, getDoc, deleteDoc, deleteField } from 'firebase/firestore';
 import { db } from '../../firebase';
-import { useNavigate } from 'react-router-dom';
 import AddEmployee from './addEmployee/AddEmployee';
 import Delete from '../../assets/delete.png';
+import handleSelect from './handleSelect';
 
 const Employee = () => {
-    const navigate = useNavigate();
-    const [chats, setChats] = useState([]);
     const [addModel, setAddModel] = useState(false);
     const [searchText, setSearchText] = useState('');
     const { currentUser } = useContext(AuthContext);
-    const { dispatch } = useContext(ChatContext);
     const { departments, fetchUsers } = useContext(UserListContext);
     const [employees, setEmployees] = useState([]);
-    const [filteredEmployees, setFilteredEmployees] = useState([]); // Состояние для отфильтрованных сотрудников
+    const [filteredEmployees, setFilteredEmployees] = useState([]); 
     const [roles, setRoles] = useState({});
-    const [selectedRole, setSelectedRole] = useState(''); // Состояние для хранения данных о ролях
+    const [selectedRole, setSelectedRole] = useState(''); 
 
     useEffect(() => {
         if (currentUser && currentUser.uid) {
@@ -49,7 +46,6 @@ const Employee = () => {
                     ? URL.createObjectURL(doc.data().photoURL) 
                     : doc.data().photoURL
             }));
-            console.log("Fetched users:", users); // Debug log
             setEmployees(users);
             filterEmployeesByRole(selectedRole, users); 
         });
@@ -68,51 +64,7 @@ const Employee = () => {
 
         return () => unsubscribe();
     }, []);
-
-    const handleSelect = async (u) => {
-        const combinedId = currentUser.uid > u.uid
-            ? currentUser.uid + u.uid
-            : u.uid + currentUser.uid;
     
-        try {
-            const res = await getDoc(doc(db, "chats", combinedId));
-    
-            if (!res.exists()) {
-                await setDoc(doc(db, "chats", combinedId), { messages: [] });
-    
-                // Создаем документы в userChats, если их нет
-                await setDoc(doc(db, "userChats", currentUser.uid), {}, { merge: true });
-                await setDoc(doc(db, "userChats", u.uid), {}, { merge: true });
-    
-                await updateDoc(doc(db, "userChats", currentUser.uid), {
-                    [combinedId + ".userInfo"]: {
-                        uid: u.uid,
-                        displayName: u.displayName || '',
-                        photoURL: u.photoURL || '',
-                    },
-                    [combinedId + ".date"]: serverTimestamp(),
-                });
-    
-                await updateDoc(doc(db, "userChats", u.uid), {
-                    [combinedId + ".userInfo"]: {
-                        uid: currentUser.uid,
-                        displayName: currentUser.displayName || '',
-                        photoURL: currentUser.photoURL || '',
-                    },
-                    [combinedId + ".date"]: serverTimestamp(),
-                });
-    
-                dispatch({ type: "ADD_CHAT", payload: { uid: combinedId, members: [currentUser, u], messages: [] } });
-            }
-    
-            dispatch({ type: "CHANGE_USER", payload: u });
-            navigate('/');
-        } catch (err) {
-            console.error(err);
-        }
-    };
-    
-
     const handleSearch = (e) => {
         const searchText = e.target.value.toLowerCase();
         setSearchText(searchText);
@@ -120,13 +72,13 @@ const Employee = () => {
         const filteredResults = employees.filter(employee =>
             employee.displayName.toLowerCase().includes(searchText)
         );
-        filterEmployeesByRole(selectedRole, filteredResults); // Фильтруем результаты поиска по выбранной роли
+        filterEmployeesByRole(selectedRole, filteredResults); 
     };
 
     const handleSortByRole = (e) => {
         const selectedRole = e.target.value;
-        setSelectedRole(selectedRole); // Обновляем выбранную роль
-        filterEmployeesByRole(selectedRole, employees); // Фильтруем сотрудников по выбранной роли
+        setSelectedRole(selectedRole); 
+        filterEmployeesByRole(selectedRole, employees); 
     };
 
     const filterEmployeesByRole = (role, employeesList) => {
@@ -138,12 +90,12 @@ const Employee = () => {
             : filteredEmployees.filter(employee =>
                 employee.displayName.toLowerCase().includes(searchText)
             );
-        setFilteredEmployees(filteredResults); // Устанавливаем отфильтрованных сотрудников
+        setFilteredEmployees(filteredResults); 
     };
 
     useEffect(() => {
         if (employees.length > 0) {
-            filterEmployeesByRole(selectedRole, employees); // Фильтруем сотрудников по выбранной роли при загрузке
+            filterEmployeesByRole(selectedRole, employees); 
         }
     }, [employees, selectedRole]);
     
