@@ -57,7 +57,7 @@ const LoginPage = ({title, handleClick}) => {
                                 </button>
                             </div>
                             <div className="aut-reg">
-                                У вас не существует аккаунт? <Link to="/register">Зарегестрироваться</Link>
+                                У вас не существует аккаунт? <Link to="/Diplom/register">Зарегестрироваться</Link>
                             </div>
                         </form>
                     </div>

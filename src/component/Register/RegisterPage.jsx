@@ -126,7 +126,7 @@ const handleChange = (e) => {
               </div>
               <div className="aut-reg">
                 У вас уже существует аккаунт?{" "}
-                <Link to="/login">Авторизироваться</Link>
+                <Link to="/Diplom/login">Авторизироваться</Link>
               </div>
             </form>
           </div>
