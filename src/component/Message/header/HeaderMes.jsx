@@ -1,7 +1,4 @@
 import React, { useContext, useState } from "react";
-import { useDispatch } from 'react-redux';
-import Logo from '../../../assets/logo.png';
-import { MdClose } from "react-icons/md";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { signOut } from "firebase/auth";
 import { auth } from "../../../firebase";
@@ -26,10 +23,10 @@ const HeaderMes = () => {
             <label className="burger-user">{displayName}</label>
             <ul className="menu-list">
               <li className="menu-item">
-                <a onClick={() => { navigate('/diplom3/') }}>Чат</a>
+                <a onClick={() => { navigate('/Diplom/') }}>Чат</a>
               </li>
               <li className="menu-item">
-                <a onClick={() => { navigate('/diplom3/employee') }}>Сотрудники</a>
+                <a onClick={() => { navigate('/Diplom/employee') }}>Сотрудники</a>
               </li>
               <li className="menu-item menu-item__user">
                 <img src={avatarUrl || Avatar} alt="avatar"/>

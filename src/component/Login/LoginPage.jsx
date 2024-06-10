@@ -16,7 +16,7 @@ const LoginPage = ({title, handleClick}) => {
         try{
             await signInWithEmailAndPassword(auth, 
                 userEmail, password);
-            navigate("/diplom3/");
+            navigate("/Diplom/");
           
         }catch(err){
             setErrMessage('Ошибка авторизации. Пожалуйста попробуйте ещё раз.');

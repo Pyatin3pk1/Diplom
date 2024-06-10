@@ -29,10 +29,10 @@ const App = () => {
     <BrowserRouter>
       <Routes >
         
-        <Route exact path="/diplom3/login" element={<Log/>} />
-        <Route exact path="/diplom3/register" element={<Reg/>} />
-        <Route exact path="/diplom3/" element={<ChatMes/>} />
-        <Route exact path="/diplom3/employee" element={<EmployeePage/>} />
+        <Route exact path="/Diplom/login" element={<Log/>} />
+        <Route exact path="/Diplom/register" element={<Reg/>} />
+        <Route exact path="/Diplom/" element={<ChatMes/>} />
+        <Route exact path="/Diplom/employee" element={<EmployeePage/>} />
         <Route
           exact path="/"
           element={
