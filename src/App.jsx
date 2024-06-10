@@ -12,16 +12,13 @@ import Log from "./component/Login/Log";
 import ChatMes from "./component/Message/ChatMes";
 import Reg from "./component/Register/Reg";
 import EmployeePage from "./component/Employee/EmployeePage";
-import ListEmployee from "./component/Employee/ListEmployee";
-import Employee from "./component/Employee/Employee";
-import ListUser from "./component/Employee/ListUser";
 
 
 const App = () => {
   const { currentUser } = useContext(AuthContext);
   const ProtectedRoute = ({ children }) => {
     if (!currentUser) {
-      return <Navigate to="/login" />;
+      return <Navigate to="/Diplom/login" />;
     }
     return children;
   };
