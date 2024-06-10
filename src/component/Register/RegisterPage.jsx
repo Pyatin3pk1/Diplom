@@ -47,7 +47,7 @@ const handleSubmit = async (e) => {
           });
           await setDoc(doc(db, "userChats", res.user.uid), {});
 
-          navigate("/");
+          navigate("/diplom3/");
       } catch (error) {
           setErr(true);
           console.error("Ошибка при регистрации: ", error);

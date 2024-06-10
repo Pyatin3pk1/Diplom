@@ -26,10 +26,10 @@ const HeaderMes = () => {
             <label className="burger-user">{displayName}</label>
             <ul className="menu-list">
               <li className="menu-item">
-                <a onClick={() => { navigate('/') }}>Чат</a>
+                <a onClick={() => { navigate('/diplom3/') }}>Чат</a>
               </li>
               <li className="menu-item">
-                <a onClick={() => { navigate('/employee') }}>Сотрудники</a>
+                <a onClick={() => { navigate('/diplom3/employee') }}>Сотрудники</a>
               </li>
               <li className="menu-item menu-item__user">
                 <img src={avatarUrl || Avatar} alt="avatar"/>

@@ -43,7 +43,7 @@ const handleSelect = async (u, navigate, currentUser, dispatch) => {
         });
         dispatch({ type: "ADD_CHAT", payload: { uid: combinedId, members: [currentUser, u], messages: [] } });
         dispatch({ type: "CHANGE_USER", payload: u });
-        navigate('/');
+        navigate('/diplom3/');
     } catch (err) {
         console.error("Ошибка при создании или получении чата:", err);
     }

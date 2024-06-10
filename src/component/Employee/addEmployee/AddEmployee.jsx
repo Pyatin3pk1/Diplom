@@ -17,7 +17,7 @@ const AddEmployee = ({ closeModal }) => {
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [birthdate, setBirthdate] = useState(""); // Новое состояние для даты рождения
+    const [birthdate, setBirthdate] = useState(""); 
     const [selectedRole, setSelectedRole] = useState("");
     const [selectedDepartment, setSelectedDepartment] = useState("");
     const [err, setErr] = useState(false);
@@ -65,20 +65,17 @@ const AddEmployee = ({ closeModal }) => {
                 displayName: fullName,
                 photoURL,
                 email,
-                birthdate,  // Сохраняем дату рождения
+                birthdate,  
                 role: selectedRole,
                 department: selectedDepartment,
             });
             await setDoc(doc(db, "userChats", res.user.uid), {});
 
-            // Входим обратно в учетную запись администратора
             await signOut(auth);
-            await signInWithEmailAndPassword(auth, currentUser.email, password); // Предполагается, что у вас есть способ хранения пароля администратора
+            await signInWithEmailAndPassword(auth, currentUser.email, password); 
 
-            // Включаем прослушиватель изменений состояния аутентификации
             setAuthListenerEnabled(true);
 
-            // Закрываем модальное окно и обновляем список пользователей
             fetchUsers();
             closeModal();
         } catch (err) {
