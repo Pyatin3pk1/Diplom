@@ -8,7 +8,7 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import Avatar from "../../assets/avatar.png";
 
 const RegisterPage = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [avatar, setAvatar] = useState({ file: null, url: "" });
   const [err, setErr] = useState(false);
   

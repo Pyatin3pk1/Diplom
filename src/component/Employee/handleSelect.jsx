@@ -1,9 +1,5 @@
-import { useContext } from 'react';
-import { AuthContext } from '../Context/AuthContext';
-import { ChatContext } from '../Context/ChatContext';
 import { doc, serverTimestamp, setDoc, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
-import { useNavigate } from 'react-router-dom';
 
 const handleSelect = async (u, navigate, currentUser, dispatch) => {
     const combinedId = currentUser.uid > u.uid

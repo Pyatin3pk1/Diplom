@@ -1,26 +1,26 @@
 import React, { useState } from 'react';
 
-import {Link, useNavigate} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { auth } from '../../firebase';
 import { signInWithEmailAndPassword } from "firebase/auth";
 
-const LoginPage = ({title, handleClick}) => {
-    const[email, setEmail] = useState('');
-    const[pass, setPass] = useState('');
-    const[errMessage, setErrMessage] = useState('')
+const LoginPage = () => {
+    const [email, setEmail] = useState('');
+    const [pass, setPass] = useState('');
+    const [errMessage, setErrMessage] = useState('')
     const navigate = useNavigate();
-    const handleSubmit = async (e) =>{
+    const handleSubmit = async (e) => {
         e.preventDefault()
         const userEmail = email;
-        const password = pass;        
-        try{
-            await signInWithEmailAndPassword(auth, 
+        const password = pass;
+        try {
+            await signInWithEmailAndPassword(auth,
                 userEmail, password);
             navigate("/Diplom/");
-          
-        }catch(err){
+
+        } catch (err) {
             setErrMessage('Ошибка авторизации. Пожалуйста попробуйте ещё раз.');
-            setTimeout (() => {
+            setTimeout(() => {
                 setErrMessage('');
             }, 10000)
         }
@@ -36,23 +36,23 @@ const LoginPage = ({title, handleClick}) => {
                             <div className="input-group">
                                 <label htmlFor="email">Email:</label>
                                 <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                placeholder='email'
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder='email'
                                 />
                             </div>
                             <div className="input-group">
-                                    <label htmlFor="password">Пароль:</label>
-                                    <input
-                                        type="password"
-                                        value={pass}
-                                        onChange={(e) => setPass(e.target.value)}
-                                        placeholder='password'
-                                    />
-                                </div>
+                                <label htmlFor="password">Пароль:</label>
+                                <input
+                                    type="password"
+                                    value={pass}
+                                    onChange={(e) => setPass(e.target.value)}
+                                    placeholder='password'
+                                />
+                            </div>
                             <div className="input-group">
-                            <button>
+                                <button>
                                     Авторизоваться
                                 </button>
                             </div>
@@ -62,9 +62,9 @@ const LoginPage = ({title, handleClick}) => {
                         </form>
                     </div>
                 </div>
-            </div>   
+            </div>
         </>
     );
 };
 
-export {LoginPage};
+export { LoginPage };
