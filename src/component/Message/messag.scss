@@ -115,7 +115,7 @@ body {
 
   .sidebar-button {
       display: flex;
-      width: 50px;
+      width: auto;
       position: static;
       align-items: center;
   }
@@ -929,7 +929,7 @@ button {
       display: none;
     }
     
-    @media(max-width: 1000px) {
+    @media(max-width: 742px) {
       .container {
         padding: 0 10px;
       }
@@ -1038,6 +1038,7 @@ button {
     
       .home .container {
         width: 100%;
+        height: auto;
       }
     
       .chat {
