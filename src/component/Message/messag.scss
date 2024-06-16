@@ -108,7 +108,7 @@ body {
   display: none;
 }
 
-@media(max-width: 742px) {
+@media(max-width: 100px) {
   .sidebar {
       display: none;
   }
@@ -931,9 +931,6 @@ button {
     }
     
     @media(max-width: 1000px) {
-      .container {
-        padding: 0 10px;
-      }
     
       .header .container {
         flex-direction: column;
@@ -1059,7 +1056,7 @@ button {
     }
     
     /* Specific styles for small devices */
-    @media(max-width: 480px) {
+    @media(max-width: 1000px) {
       .menu-item {
         margin-right: 10px;
       }
