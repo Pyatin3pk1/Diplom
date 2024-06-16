@@ -19,6 +19,7 @@ const HeaderMes = () => {
       <header className="header">
         <div className="container">
           <nav className={`menu ${isOpen ? "active" : ""}`}>
+            <label className="burger-user"></label>
             <ul className="menu-list">
               <li className="menu-item">
                 <a onClick={() => { navigate('/Diplom/') }}>Чат</a>
