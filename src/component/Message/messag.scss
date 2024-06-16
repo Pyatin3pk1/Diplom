@@ -979,6 +979,10 @@ body {
     
       .home .container.open .chat {
         display: none;
+        .input{
+          padding: 0;
+          position: absolute;
+        }
       }
     
       .container-log {
