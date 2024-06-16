@@ -125,7 +125,7 @@ body {
     .menu{
         position: fixed;
         top: 0;
-        left: -227px;
+        left: -240px;
         padding: 0;
         display: flex;
         flex-direction: column;
@@ -576,7 +576,7 @@ body {
   
       .chat {
         flex: 2;
-  
+        height: auto;
         .chatInfo {
           height: 50px;
           padding: 10px;
