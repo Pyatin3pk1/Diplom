@@ -15,6 +15,7 @@ const Input = () => {
     const [file, setFile] = useState(null);
     const [filePreview, setFilePreview] = useState(null);
     const [messageSent, setMessageSent] = useState(false);
+    const [uploadingFile, setUploadingFile] = useState(false); 
     const { currentUser } = useContext(AuthContext);
     const { data } = useContext(ChatContext);
 
@@ -38,6 +39,7 @@ const Input = () => {
             let downloadURL = null;
 
             if (file) {
+                setUploadingFile(true); 
                 const storageRef = ref(storage, `files/${uuid()}-${file.name}`);
                 const uploadTask = uploadBytesResumable(storageRef, file);
 
@@ -56,6 +58,7 @@ const Input = () => {
                             downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
                             console.log("File available at: ", downloadURL);
                             downloadURL = encryptText(downloadURL);
+                            setUploadingFile(false); 
                             resolve();
                         }
                     );
@@ -77,14 +80,14 @@ const Input = () => {
             });
 
             await updateDoc(doc(db, "userChats", currentUser.uid), {
-                [`${data.chatId}.lastMessage.isRead`]: true, // Изменено здесь
+                [`${data.chatId}.lastMessage.isRead`]: true, 
             });
 
             await updateDoc(doc(db, "userChats", data.user.uid), {
                 [`${data.chatId}.lastMessage`]: {
                     text: encryptedText,
                     file: downloadURL || null,
-                    isRead: false, // Добавлено здесь
+                    isRead: false, 
                 },
                 [`${data.chatId}.date`]: serverTimestamp(),
             });
@@ -121,6 +124,13 @@ const Input = () => {
         setFilePreview(null);
     };
 
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault(); 
+            handleSend(); 
+        }
+    };
+
     useEffect(() => {
         let timer;
         if (messageSent) {
@@ -135,6 +145,11 @@ const Input = () => {
         <div className='input'>
             {filePreview && (
                 <div className="file-preview" style={{ cursor: 'pointer' }}>
+                    {uploadingFile && ( 
+                        <div className="uploading-notification">
+                            <p>Загрузка...</p>
+                        </div>
+                    )}
                     <img className="file-preview__delete" src={Delete} onClick={handleFileRemove} alt="Delete"/>
                     { /\.(gif|jpe?g|tiff?|png|webp|bmp)$/i.test(file.name) ? (
                         <img src={filePreview} alt="file preview" />
@@ -143,6 +158,7 @@ const Input = () => {
                     )}
                 </div>
             )}
+            
             <div className="send">
                 <textarea
                     type="text"
@@ -155,6 +171,7 @@ const Input = () => {
                             alert(`Сообщение не может превышать ${MAX_MESSAGE_LENGTH} символов.`);
                         }
                     }}
+                    onKeyPress={handleKeyPress} 
                 />
                 <input type="file" onChange={handleFileChange} style={{ display: "none" }} id="file" />
                 <label htmlFor="file">
