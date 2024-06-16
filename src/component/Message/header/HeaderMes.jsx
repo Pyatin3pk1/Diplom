@@ -11,7 +11,6 @@ const HeaderMes = () => {
   const navigate = useNavigate();
   const [isOpen, setOpen] = useState(false);
 
-  // Проверяем, что currentUser установлен, прежде чем использовать его свойства
   const displayName = currentUser ? currentUser.displayName : '';
   const avatarUrl = currentUser ? currentUser.photoURL : '';
 

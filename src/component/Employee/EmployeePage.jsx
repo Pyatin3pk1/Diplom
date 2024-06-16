@@ -36,13 +36,10 @@ const EmployeePage = () => {
                                 break;
                         }
                     } else {
-                        console.error('No such document!');
                     }
                 } catch (error) {
-                    console.error('Error fetching user role:', error);
                 }
             } else {
-                alert("Ошибка пользователя");
             }
         };
 

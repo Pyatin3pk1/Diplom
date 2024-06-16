@@ -6,7 +6,6 @@ import { isSameDay } from 'date-fns';
 const Messages = () => {
     const { data } = useContext(ChatContext);
 
-    console.log("ChatContext data:", data); 
     if (!data || !data.messages || !Array.isArray(data.messages)) {
         return <div>No messages available</div>;
     }

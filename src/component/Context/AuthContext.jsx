@@ -6,24 +6,29 @@ export const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [authListenerEnabled, setAuthListenerEnabled] = useState(true);
 
   useEffect(() => {
-    let unsub;
+    let unsubscribe;
 
     if (authListenerEnabled) {
-      unsub = onAuthStateChanged(auth, (user) => {
+      unsubscribe = onAuthStateChanged(auth, (user) => {
         setCurrentUser(user || null);
-        console.log(user);
+        setLoading(false);
       });
     }
 
     return () => {
-      if (unsub) {
-        unsub();
+      if (unsubscribe) {
+        unsubscribe();
       }
     };
   }, [authListenerEnabled]);
+
+  if (loading) {
+    return <div>Loading...</div>; 
+  }
 
   return (
     <AuthContext.Provider value={{ currentUser, setAuthListenerEnabled }}>
@@ -31,5 +36,3 @@ export const AuthContextProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
-
