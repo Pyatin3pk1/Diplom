@@ -992,7 +992,6 @@ body {
     
       .home .container {
         width: 100%;
-        height: auto;
       }
     
       .chat {
@@ -1012,7 +1011,6 @@ body {
       }
     }
     
-    /* Specific styles for small devices */
     @media(max-width: 1000px) {
       .menu-item {
         margin-right: 10px;
