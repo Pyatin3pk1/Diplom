@@ -22,6 +22,7 @@ const AddEmployee = ({ closeModal }) => {
     const [selectedDepartment, setSelectedDepartment] = useState("");
     const [err, setErr] = useState(false);
     const [successMessage, setSuccessMessage] = useState(""); // Добавленное состояние для сообщения об успехе
+    const [creatingUser, setCreatingUser] = useState(false); // Добавленное состояние для отслеживания процесса создания
 
     useEffect(() => {
         const fetchRolesAndDepartments = async () => {
@@ -49,6 +50,7 @@ const AddEmployee = ({ closeModal }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            setCreatingUser(true); // Устанавливаем состояние создания пользователя в true
             setAuthListenerEnabled(false);
 
             const res = await createUserWithEmailAndPassword(auth, email, password);
@@ -91,6 +93,8 @@ const AddEmployee = ({ closeModal }) => {
                 alert("Произошла ошибка: " + err.message);
             }
             setAuthListenerEnabled(true); 
+        } finally {
+            setCreatingUser(false); // Сбрасываем состояние создания пользователя обратно в false
         }
     };
 
@@ -148,9 +152,10 @@ const AddEmployee = ({ closeModal }) => {
                             <option key={department.uid} value={department.uid}>{department.Name}</option>
                         ))}
                     </select>
+                    {creatingUser && <span>Происходит создание...</span>} {/* Отображение сообщения о создании */}
                     {err && <span>Ошибка при регистрации</span>}
                     {successMessage && <span className="success-message">{successMessage}</span>} {/* Отображение сообщения об успехе */}
-                    <button type="submit">Сохранить</button>
+                    <button type="submit" disabled={creatingUser}>Сохранить</button> {/* Кнопка заблокирована во время создания пользователя */}
                 </form>
             </div>
         </div>
