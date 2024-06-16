@@ -18,6 +18,7 @@ const Employee = () => {
     const { currentUser } = useContext(AuthContext);
     const { departments, fetchUsers } = useContext(UserListContext);
     const [employees, setEmployees] = useState([]);
+    const { dispatch } = useContext(ChatContext);
     const [filteredEmployees, setFilteredEmployees] = useState([]); 
     const [roles, setRoles] = useState({});
     const [selectedRole, setSelectedRole] = useState(''); 
@@ -91,6 +92,9 @@ const Employee = () => {
                 employee.displayName.toLowerCase().includes(searchText)
             );
         setFilteredEmployees(filteredResults); 
+    };
+    const handleClick = (u) => {
+        handleSelect(u, navigate, currentUser, dispatch);
     };
 
     useEffect(() => {
@@ -185,7 +189,7 @@ const Employee = () => {
                                 const birthdate = employee.birthdate ? new Date(employee.birthdate).toLocaleDateString() : '-';
                                 return (
                                     <div className="employee-item" key={employee.uid}>
-                                        <div className="employee-item__content" onClick={() => handleSelect(employee)}>
+                                        <div className="employee-item__content" onClick={() => handleClick(employee)}>
                                             <img src={avatarUrl} alt='avatar'/>
                                             <div className="employeeList">
                                                 <label>{employee.displayName}</label>

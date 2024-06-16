@@ -320,7 +320,6 @@ body {
     .container {
       border: 1px solid darkblue;
       background: rgba(20, 52, 141, 0.589);
-      backdrop-filter: blur(19px) saturate(180%);
       background-repeat: 10px;
       width: 65%;
       height: 90vh;
@@ -723,7 +722,7 @@ body {
           display: flex;
           justify-content: space-between;
           flex-direction: column;
-          position: relative;
+
       
           .file-preview {
               display: flex;
