@@ -21,6 +21,7 @@ const AddEmployee = ({ closeModal }) => {
     const [selectedRole, setSelectedRole] = useState("");
     const [selectedDepartment, setSelectedDepartment] = useState("");
     const [err, setErr] = useState(false);
+    const [successMessage, setSuccessMessage] = useState(""); // Добавленное состояние для сообщения об успехе
 
     useEffect(() => {
         const fetchRolesAndDepartments = async () => {
@@ -78,6 +79,9 @@ const AddEmployee = ({ closeModal }) => {
 
             fetchUsers();
             closeModal();
+            
+            // Установка сообщения об успехе
+            setSuccessMessage("Сотрудник успешно создан!");
         } catch (err) {
             console.error("Ошибка при регистрации:", err);
             if (err.code && err.code.includes("auth/")) {
@@ -145,6 +149,7 @@ const AddEmployee = ({ closeModal }) => {
                         ))}
                     </select>
                     {err && <span>Ошибка при регистрации</span>}
+                    {successMessage && <span className="success-message">{successMessage}</span>} {/* Отображение сообщения об успехе */}
                     <button type="submit">Сохранить</button>
                 </form>
             </div>
