@@ -1023,11 +1023,12 @@ body {
       }
     
       .menu-item a {
-        font-size: 18px;
+        font-size: 30px;
       }
     
       .menu.active {
         transform: translateX(220px);
+        width: 60%;
       }
     }
     
