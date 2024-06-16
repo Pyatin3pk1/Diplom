@@ -787,4 +787,248 @@ body {
       }
     }
   
+
+    body {
+      background-color: #000c3f; // dark blue
+      font-family: 'Roboto', sans-serif;
+      color: white;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    /* header */
+    .header .container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .menu {
+      padding: 40px 0;
+      position: static;
+      height: 5px;
+    }
+    
+    .menu-list {
+      list-style: none;
+      display: flex;
+      align-items: center;
+    }
+    
+    .menu-item__user .emploueeInfo {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .menu-item__user img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    
+    .menu-item {
+      margin-right: 88px;
+    }
+    
+    .menu-item a {
+      color: white;
+      font-size: 24px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    
+    .menu-item a:hover {
+      border-bottom: 2px solid white;
+    }
+    
+    .menu-item ul li {
+      list-style: none;
+      position: relative;
+    }
+    
+    .menu-item ul li button {
+      background: none;
+      list-style: none;
+      font-size: 18px;
+      display: none;
+      position: absolute;
+      right: 30px;
+    }
+    
+    .button-logaut {
+      display: flex;
+    }
+    
+    .menu-item ul li button:hover {
+      color: burlywood;
+    }
+    
+    .burger-user {
+      display: none;
+    }
+    
+    .menu-item:hover > ul li button {
+      display: inherit;
+    }
+    
+    .menu-button {
+      display: none;
+    }
+    
+    .sidebar-button {
+      display: none;
+    }
+    
+    @media(max-width: 742px) {
+      .container {
+        padding: 0 10px;
+      }
+    
+      .header .container {
+        flex-direction: column;
+      }
+    
+      .menu {
+        position: fixed;
+        top: 0;
+        left: -227px;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: visible;
+        width: 220px;
+        height: 100%;
+        color: #000c3f;
+        background-color: white;
+        border: 2px solid #000c3f;
+        border-top-right-radius: 16px;
+        border-bottom-right-radius: 16px;
+        transition: transform 0.3s linear;
+      }
+    
+      .menu.active {
+        transform: translateX(100%);
+      }
+    
+      .burger-user {
+        font-size: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-top: 40px;
+        color: #00b4d8;
+      }
+    
+      .menu-list {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+    
+      .menu-item {
+        margin: 10px 0;
+        font-weight: 500;
+        color: #000c3f;
+      }
+    
+      .menu-item a {
+        margin: 10px 0;
+        font-weight: 500;
+        color: #000c3f;
+      }
+    
+      .button-logaut {
+        display: block;
+        font-size: 24px;
+        bottom: 0;
+        position: absolute;
+        text-decoration: solid;
+        font-weight: 500;
+        color: #000c3f;
+      }
+    
+      .menu-button {
+        display: block;
+        margin-left: auto;
+        height: 24px;
+        top: 0;
+        right: 0;
+        padding: 0;
+        position: fixed;
+      }
+    
+      .sidebar {
+        display: none;
+      }
+    
+      .sidebar-button {
+        display: flex;
+        width: auto;
+        position: static;
+        align-items: center;
+      }
+    
+      .home .container.open .sidebar {
+        display: block;
+      }
+    
+      .home .container.open .chat {
+        display: none;
+      }
+    
+      .container-log {
+        width: 100%;
+        padding: 0 20px;
+      }
+    
+      .container-log .login-container {
+        padding: 20px;
+        margin-top: 20px;
+      }
+    
+      .home .container {
+        width: 100%;
+        height: auto;
+      }
+    
+      .chat {
+        height: calc(100vh - 50px);
+      }
+    
+      .messages {
+        height: calc(100% - 100px);
+      }
+    
+      .input {
+        height: auto;
+      }
+    
+      .input .send textarea {
+        width: calc(100% - 80px);
+      }
+    }
+    
+    /* Specific styles for small devices */
+    @media(max-width: 480px) {
+      .menu-item {
+        margin-right: 10px;
+      }
+    
+      .menu-item a {
+        font-size: 18px;
+      }
+    
+      .menu.active {
+        transform: translateX(220px);
+      }
+    }
+    
   
