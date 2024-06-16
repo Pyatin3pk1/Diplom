@@ -26,7 +26,7 @@ const HeaderMes = () => {
                 <a onClick={() => { navigate('/Diplom/') }}>Чат</a>
               </li>
               <li className="menu-item">
-                <a onClick={() => { navigate('/Diplom/employee') }}>Сотрудники</a>
+                <a onClick={() => { navigate('/Diplom/employee') }}>Пользователи</a>
               </li>
               <li className="menu-item menu-item__user">
                 <img src={avatarUrl || Avatar} alt="avatar"/>

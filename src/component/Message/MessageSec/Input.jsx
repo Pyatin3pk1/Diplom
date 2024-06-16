@@ -100,7 +100,8 @@ const Input = () => {
 
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
-        if (selectedFile && selectedFile.size / (1024 * 1024) > MAX_FILE_SIZE_MB) {
+        if (selectedFile && selectedFile.size / (1024 * 1024) 
+            > MAX_FILE_SIZE_MB) {
             alert(`Файл не может превышать ${MAX_FILE_SIZE_MB} МБ.`);
             setFile(null);
             setFilePreview(null);
@@ -121,7 +122,6 @@ const Input = () => {
     };
 
     useEffect(() => {
-        // Reset messageSent state after a certain delay
         let timer;
         if (messageSent) {
             timer = setTimeout(() => {

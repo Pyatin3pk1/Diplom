@@ -25,7 +25,6 @@ const Chats = () => {
             return () => unsubscribe();
         }
     }, [currentUser]);
-
     const handleSelect = (chatId, userInfo) => {
         dispatch({ type: "CHANGE_USER", payload: userInfo });
         try {
@@ -37,29 +36,23 @@ const Chats = () => {
             console.error("Error updating lastMessage: ", error);
         }
     };
-
     const handleDeleteChat = async (userInfo, chatId) => {
         if (!currentUser || !currentUser.uid || !userInfo || !userInfo.uid || !chatId) {
             return;
         }
-
-        const confirmDelete = window.confirm(`Вы уверены, что хотите удалить чат с ${userInfo.displayName}?`);
-
+        const confirmDelete = window.confirm(`Вы уверены, что хотите 
+            удалить чат с ${userInfo.displayName}?`);
         if (!confirmDelete) {
             return;
         }
-
         try {
             await deleteDoc(doc(db, "chats", chatId));
-
             await updateDoc(doc(db, "userChats", currentUser.uid), {
                 [chatId]: deleteField()
             });
-
             await updateDoc(doc(db, "userChats", userInfo.uid), {
                 [chatId]: deleteField()
             });
-
             setChats(prevChats => prevChats.filter(chat => chat.chatId !== chatId));
         } catch (err) {
             console.error(err);

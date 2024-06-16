@@ -6,14 +6,10 @@ import { isSameDay } from 'date-fns';
 const Messages = () => {
     const { data } = useContext(ChatContext);
 
-    console.log("ChatContext data:", data); // Для отладки
-
-    // Проверка наличия сообщений
+    console.log("ChatContext data:", data); 
     if (!data || !data.messages || !Array.isArray(data.messages)) {
         return <div>No messages available</div>;
     }
-
-    // Сортировка сообщений по дате
     const sortedMessages = data.messages.sort((a, b) => a.date.toDate() - b.date.toDate());
 
     const checkShowDate = (index) => {

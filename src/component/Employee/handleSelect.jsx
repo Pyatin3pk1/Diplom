@@ -37,7 +37,8 @@ const handleSelect = async (u, navigate, currentUser, dispatch) => {
             },
             [combinedId + ".date"]: serverTimestamp(),
         });
-        dispatch({ type: "ADD_CHAT", payload: { uid: combinedId, members: [currentUser, u], messages: [] } });
+        dispatch({ type: "ADD_CHAT", payload: { uid: combinedId, 
+            members: [currentUser, u], messages: [] } });
         dispatch({ type: "CHANGE_USER", payload: u });
         navigate('/Diplom/');
     } catch (err) {
