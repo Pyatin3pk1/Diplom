@@ -27,6 +27,7 @@ const handleSelect = async (u, navigate, currentUser, dispatch) => {
                 displayName: u.displayName || '',
                 photoURL: u.photoURL || '',
             },
+            [`${combinedId}.lastMessage.isRead`]: true, 
             [combinedId + ".date"]: serverTimestamp(),
         });
         await updateDoc(selectedUserChatRef, {
@@ -35,6 +36,7 @@ const handleSelect = async (u, navigate, currentUser, dispatch) => {
                 displayName: currentUser.displayName || '',
                 photoURL: currentUser.photoURL || '',
             },
+            [`${combinedId}.lastMessage.isRead`]: true, 
             [combinedId + ".date"]: serverTimestamp(),
         });
         dispatch({ type: "ADD_CHAT", payload: { uid: combinedId, 

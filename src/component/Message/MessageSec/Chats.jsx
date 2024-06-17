@@ -10,6 +10,7 @@ const Chats = () => {
     const [chats, setChats] = useState([]);
     const { currentUser } = useContext(AuthContext);
     const { dispatch } = useContext(ChatContext);
+    const [isOpen, setOpen] = useState();
     const [lastPageUpdate, setLastPageUpdate] = useState(
         parseInt(localStorage.getItem('lastPageUpdate')) || Date.now()
     );
@@ -25,6 +26,7 @@ const Chats = () => {
             return () => unsubscribe();
         }
     }, [currentUser]);
+
     const handleSelect = (chatId, userInfo) => {
         dispatch({ type: "CHANGE_USER", payload: userInfo });
         try {
@@ -36,12 +38,12 @@ const Chats = () => {
             console.error("Error updating lastMessage: ", error);
         }
     };
+
     const handleDeleteChat = async (userInfo, chatId) => {
         if (!currentUser || !currentUser.uid || !userInfo || !userInfo.uid || !chatId) {
             return;
         }
-        const confirmDelete = window.confirm(`Вы уверены, что хотите 
-            удалить чат с ${userInfo.displayName}?`);
+        const confirmDelete = window.confirm(`Вы уверены, что хотите удалить чат с ${userInfo.displayName}?`);
         if (!confirmDelete) {
             return;
         }
@@ -68,9 +70,12 @@ const Chats = () => {
             {Array.isArray(chats) && chats.map((chat) => {
                 const avatarUrl = chat.userInfo?.photoURL ? chat.userInfo.photoURL : Avatar;
                 const isRead = chat.lastMessage?.isRead;
+
+                const chatClass = chat.lastMessage?.hasOwnProperty('isRead') ? 'read' : 'unread';
+
                 return (
-                    <div className={`userChat ${isRead ? 'read' : 'unread'}`} key={chat.chatId}>
-                        <div className="userChatInfo" onClick={() => handleSelect(chat.chatId, chat.userInfo)}>
+                    <div className={`userChat ${chatClass}`} key={chat.chatId}>
+                        <div className="userChatInfo" onClick={() => { handleSelect(chat.chatId, chat.userInfo); setOpen(!isOpen); }}>
                             <img src={avatarUrl} alt="" />
                             <span>{chat.userInfo?.displayName}</span>
                         </div>
